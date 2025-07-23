@@ -128,15 +128,6 @@ const ChartTooltipContent = React.forwardRef<
     color?: string;
   } & React.ComponentProps<'div'>
 >(
-
-    React.ComponentProps<'div'> & {
-      hideLabel?: boolean;
-      hideIndicator?: boolean;
-      indicator?: 'line' | 'dot' | 'dashed';
-      nameKey?: string;
-      labelKey?: string;
-    }
->(
   (
     {
       active,
