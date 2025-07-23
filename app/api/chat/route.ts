@@ -65,26 +65,34 @@ export async function POST(request: NextRequest) {
     };
 
     // Update or create conversation
-    await db.collection('conversations').updateOne(
-      { 
-        userId: new ObjectId((session.user as any).id),
-        conversationId: currentConvId 
-      },
-      { 
-        $push: { 
-          messages: { 
-            $each: conversationData.messages 
-          } 
-        },
-        $set: { lastUpdated: new Date() },
-        $setOnInsert: { 
-          userId: conversationData.userId,
-          conversationId: currentConvId,
-          createdAt: new Date()
+   const existingConversation = await db.collection('conversations').findOne({
+  userId: new ObjectId((session.user as any).id),
+  conversationId: currentConvId
+});
+
+if (existingConversation) {
+  // If conversation exists, push messages
+  await db.collection('conversations').updateOne(
+    {
+      userId: new ObjectId((session.user as any).id),
+      conversationId: currentConvId
+    },
+    {
+      $push: {
+        messages: {
+          $each: conversationData.messages
         }
       },
-      { upsert: true }
-    );
+      $set: { lastUpdated: new Date() }
+    }
+  );
+} else {
+  // If not exists, insert new
+  await db.collection('conversations').insertOne({
+    ...conversationData,
+    createdAt: new Date()
+  });
+}
 
     return NextResponse.json({
       response: aiResponse,
