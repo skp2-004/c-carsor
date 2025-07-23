@@ -197,7 +197,6 @@ const ChartTooltipContent = React.forwardRef<
           {payload.map((item, index) => {
             const key = `${nameKey || item.name || item.dataKey || 'value'}`;
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
-            // Fix: Add null check for item.payload
             const indicatorColor = color || (item.payload ? item.payload.fill : undefined) || item.color;
 
             return (
@@ -266,13 +265,21 @@ ChartTooltipContent.displayName = 'ChartTooltip';
 
 const ChartLegend = RechartsPrimitive.Legend;
 
+// Define a custom type for Legend props to avoid type constraint issues
+type ChartLegendContentProps = React.ComponentProps<'div'> & {
+  payload?: {
+    value: string;
+    color?: string;
+    dataKey?: string;
+  }[];
+  verticalAlign?: 'top' | 'bottom' | 'middle';
+  hideIcon?: boolean;
+  nameKey?: string;
+};
+
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
-  React.ComponentProps<'div'> &
-    Pick<RechartsPrimitive.LegendProps, 'payload' | 'verticalAlign'> & {
-      hideIcon?: boolean;
-      nameKey?: string;
-    }
+  ChartLegendContentProps
 >(({ className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey }, ref) => {
   const { config } = useChart();
 
