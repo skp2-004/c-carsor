@@ -6,11 +6,58 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, 
-  PieChart, Pie, Cell, LineChart, Line, AreaChart, Area, RadarChart, 
-  PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar, ScatterChart, Scatter
+import {
+  ResponsiveContainer as RC,
+  BarChart as BC,
+  PieChart as PC,
+  LineChart as LC,
+  AreaChart as AC,
+  RadarChart as RDC,
+  ScatterChart as SC,
+  XAxis as X,
+  YAxis as Y,
+  CartesianGrid as CG,
+  Tooltip as TT,
+  Bar as B,
+  Pie as P,
+  Cell as C,
+  Line as L,
+  Area as A,
+  Radar as R,
+  Scatter as S,
+  PolarGrid as PG,
+  PolarAngleAxis as PAA,
+  PolarRadiusAxis as PRA
 } from 'recharts';
+
+import type { ComponentType } from 'react';
+
+// Cast to bypass JSX incompatibility
+const ResponsiveContainer = RC as unknown as ComponentType<any>;
+const BarChart = BC as unknown as ComponentType<any>;
+const PieChart = PC as unknown as ComponentType<any>;
+const LineChart = LC as unknown as ComponentType<any>;
+const AreaChart = AC as unknown as ComponentType<any>;
+const RadarChart = RDC as unknown as ComponentType<any>;
+const ScatterChart = SC as unknown as ComponentType<any>;
+
+const XAxis = X as unknown as ComponentType<any>;
+const YAxis = Y as unknown as ComponentType<any>;
+const CartesianGrid = CG as unknown as ComponentType<any>;
+const Tooltip = TT as unknown as ComponentType<any>;
+
+const Bar = B as unknown as ComponentType<any>;
+const Pie = P as unknown as ComponentType<any>;
+const Cell = C as unknown as ComponentType<any>;
+const Line = L as unknown as ComponentType<any>;
+const Area = A as unknown as ComponentType<any>;
+const Radar = R as unknown as ComponentType<any>;
+const Scatter = S as unknown as ComponentType<any>;
+
+const PolarGrid = PG as unknown as ComponentType<any>;
+const PolarAngleAxis = PAA as unknown as ComponentType<any>;
+const PolarRadiusAxis = PRA as unknown as ComponentType<any>;
+
 import { 
   TrendingUp, AlertTriangle, Wrench, Car, Users, Clock, DollarSign,
   Activity, Target, Zap, Shield, Award, BarChart3, PieChart as PieChartIcon,
