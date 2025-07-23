@@ -102,7 +102,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100">
+    <div className="min-h-screen futuristic-bg">
       {/* Mobile Sidebar */}
       {isMobile && (
         <MobileSidebar
@@ -114,37 +114,37 @@ export default function DashboardPage() {
       )}
 
       {/* Header */}
-      <div className="glass-effect shadow-xl border-b border-white/20 sticky top-0 z-30">
+      <div className="neo-glass shadow-xl border-b border-cyan-400/20 sticky top-0 z-30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
             <div className="flex items-center gap-4">
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center shadow-xl">
-                  <Car className="w-6 h-6 text-white" />
+                <div className="w-12 h-12 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center shadow-xl quantum-glow">
+                  <Car className="w-6 h-6 text-cyan-400" />
                 </div>
-                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse"></div>
+                <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-cyan-400 animate-pulse"></div>
               </div>
               <div className="hidden sm:block">
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold holographic-text">
                   Carsor AI
                 </h1>
-                <p className="text-sm text-gray-500 font-medium">Professional Platform</p>
+                <p className="text-sm text-white/60 font-medium">Professional Platform</p>
               </div>
             </div>
             
             <div className="flex items-center gap-4">
-              <Button variant="ghost" size="icon" className="relative hover:bg-white/20">
+              <Button variant="ghost" size="icon" className="relative hover:bg-white/10 text-white/70 hover:text-cyan-400">
                 <Bell className="w-5 h-5" />
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full"></div>
+                <div className="absolute -top-1 -right-1 w-3 h-3 bg-red-400 rounded-full pulse-ring"></div>
               </Button>
               
               <div className="hidden sm:flex items-center gap-3">
-                <Badge variant="outline" className="border-blue-200 text-blue-700 bg-blue-50 font-medium px-3 py-1">
+                <Badge variant="outline" className="border-cyan-400/30 text-cyan-300 bg-cyan-500/10 font-medium px-3 py-1">
                   {isVehicleOwner ? 'Vehicle Owner' : 'Service Provider'}
                 </Badge>
                 <div className="text-right">
-                  <p className="text-sm font-semibold text-gray-900">{session.user?.name}</p>
-                  <p className="text-xs text-gray-500">Welcome back</p>
+                  <p className="text-sm font-semibold text-white">{session.user?.name}</p>
+                  <p className="text-xs text-white/60">Welcome back</p>
                 </div>
               </div>
               
@@ -152,7 +152,7 @@ export default function DashboardPage() {
                 variant="outline" 
                 size="sm" 
                 onClick={handleLogout} 
-                className="border-red-200 text-red-600 hover:bg-red-50 font-medium"
+                className="border-red-400/30 text-red-400 hover:bg-red-500/10 font-medium"
               >
                 <LogOut className="w-4 h-4 mr-2" />
                 <span className="hidden sm:inline">Logout</span>
@@ -169,23 +169,23 @@ export default function DashboardPage() {
             {/* Header Section */}
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="space-y-2">
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-4xl font-bold holographic-text">
                   Vehicle Dashboard
                 </h2>
-                <p className="text-gray-600 text-lg">Manage your vehicle issues and maintenance</p>
+                <p className="text-white/70 text-lg">Manage your vehicle issues and maintenance</p>
               </div>
               
               {userProfile && (
-                <Card className="modern-card hover-lift">
+                <Card className="cyber-card hover-lift">
                   <CardContent className="p-6">
                     <div className="flex items-center gap-4">
-                      <div className="w-16 h-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center">
-                <Car className="w-5 h-5 text-white" />
+                      <div className="w-16 h-16 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-2xl flex items-center justify-center quantum-glow">
+                        <Car className="w-8 h-8 text-cyan-400" />
               </div>
               <div>
-                        <h3 className="font-bold text-gray-900 text-lg">{userProfile.vehicleModel}</h3>
-                        <p className="text-gray-600 font-medium">{userProfile.vehicleRegistration}</p>
-                        <p className="text-sm text-gray-500">Year: {userProfile.vehicleYear}</p>
+                        <h3 className="font-bold text-white text-lg">{userProfile.vehicleModel}</h3>
+                        <p className="text-white/70 font-medium">{userProfile.vehicleRegistration}</p>
+                        <p className="text-sm text-white/60">Year: {userProfile.vehicleYear}</p>
               </div>
             </div>
                   </CardContent>
@@ -195,10 +195,10 @@ export default function DashboardPage() {
 
             {/* Desktop Tabs */}
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-8">
-              <TabsList className="desktop-tabs grid w-full grid-cols-3 glass-effect border border-white/20 p-1 h-14">
-                <TabsTrigger value="report">Report Issue</TabsTrigger>
-                <TabsTrigger value="history">Issue History</TabsTrigger>
-                <TabsTrigger value="profile">Profile</TabsTrigger>
+              <TabsList className="cyber-tabs grid w-full grid-cols-3 p-1 h-14">
+                <TabsTrigger value="report" className="cyber-tab">Report Issue</TabsTrigger>
+                <TabsTrigger value="history" className="cyber-tab">Issue History</TabsTrigger>
+                <TabsTrigger value="profile" className="cyber-tab">Profile</TabsTrigger>
               </TabsList>
 
               <TabsContent value="report">
@@ -222,15 +222,15 @@ export default function DashboardPage() {
                     onCancel={() => setIsEditingProfile(false)}
                   />
                 ) : (
-                  <Card className="modern-card hover-lift">
-                    <CardHeader className="bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-t-2xl">
+                  <Card className="cyber-card hover-lift">
+                    <CardHeader className="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-t-2xl border-b border-white/10">
                       <CardTitle className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center">
-                          <User className="w-6 h-6" />
+                        <div className="w-12 h-12 bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center quantum-glow">
+                          <User className="w-6 h-6 text-cyan-400" />
                         </div>
                         <div>
-                          <span className="text-2xl font-bold">Profile Information</span>
-                          <p className="text-blue-100 font-normal">Manage your account details</p>
+                          <span className="text-2xl font-bold holographic-text">Profile Information</span>
+                          <p className="text-white/60 font-normal">Manage your account details</p>
                         </div>
                       </CardTitle>
                     </CardHeader>
@@ -238,40 +238,40 @@ export default function DashboardPage() {
                       {userProfile ? (
                         <div className="space-y-8">
                           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            <div className="glass-effect rounded-2xl p-6 border border-white/20">
-                              <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
-                                <User className="w-4 h-4" />
+                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                              <label className="text-sm font-bold text-white/80 flex items-center gap-2 mb-3">
+                                <User className="w-4 h-4 text-cyan-400" />
                                 Full Name
                               </label>
-                              <p className="text-xl font-semibold text-gray-900">{userProfile.name}</p>
+                              <p className="text-xl font-semibold text-white">{userProfile.name}</p>
                             </div>
-                            <div className="glass-effect rounded-2xl p-6 border border-white/20">
-                              <label className="text-sm font-bold text-gray-700 mb-3 block">Email Address</label>
-                              <p className="text-xl font-semibold text-gray-900">{userProfile.email}</p>
+                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                              <label className="text-sm font-bold text-white/80 mb-3 block">Email Address</label>
+                              <p className="text-xl font-semibold text-white">{userProfile.email}</p>
                             </div>
-                            <div className="glass-effect rounded-2xl p-6 border border-white/20">
-                              <label className="text-sm font-bold text-gray-700 mb-3 block">Phone Number</label>
-                              <p className="text-xl font-semibold text-gray-900">{userProfile.phone}</p>
+                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                              <label className="text-sm font-bold text-white/80 mb-3 block">Phone Number</label>
+                              <p className="text-xl font-semibold text-white">{userProfile.phone}</p>
                             </div>
-                            <div className="glass-effect rounded-2xl p-6 border border-white/20">
-                              <label className="text-sm font-bold text-gray-700 flex items-center gap-2 mb-3">
-                                <Car className="w-4 h-4" />
+                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                              <label className="text-sm font-bold text-white/80 flex items-center gap-2 mb-3">
+                                <Car className="w-4 h-4 text-cyan-400" />
                                 Vehicle Model
                               </label>
-                              <p className="text-xl font-semibold text-gray-900">{userProfile.vehicleModel}</p>
+                              <p className="text-xl font-semibold text-white">{userProfile.vehicleModel}</p>
                             </div>
-                            <div className="glass-effect rounded-2xl p-6 border border-white/20">
-                              <label className="text-sm font-bold text-gray-700 mb-3 block">Manufacturing Year</label>
-                              <p className="text-xl font-semibold text-gray-900">{userProfile.vehicleYear}</p>
+                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
+                              <label className="text-sm font-bold text-white/80 mb-3 block">Manufacturing Year</label>
+                              <p className="text-xl font-semibold text-white">{userProfile.vehicleYear}</p>
                             </div>
-                            <div className="glass-effect rounded-2xl p-6 border border-white/20 lg:col-span-2">
-                              <label className="text-sm font-bold text-gray-700 mb-3 block">Registration Number</label>
-                              <p className="text-xl font-semibold text-gray-900">{userProfile.vehicleRegistration}</p>
+                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10 lg:col-span-2">
+                              <label className="text-sm font-bold text-white/80 mb-3 block">Registration Number</label>
+                              <p className="text-xl font-semibold text-white">{userProfile.vehicleRegistration}</p>
                             </div>
                           </div>
                           <Button 
                             onClick={() => setIsEditingProfile(true)}
-                            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-2xl shadow-xl px-8 py-3 text-lg font-semibold hover-lift"
+                            className="holographic-button rounded-2xl shadow-xl px-8 py-3 text-lg font-semibold hover-lift"
                           >
                             <Settings className="w-4 h-4 mr-2" />
                             Edit Profile
@@ -280,8 +280,8 @@ export default function DashboardPage() {
                       ) : (
                         <div className="flex items-center justify-center py-8">
                           <div className="text-center">
-                            <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-                            <p className="text-slate-600">Loading profile...</p>
+                            <div className="loading-cyber w-12 h-12 mx-auto mb-4"></div>
+                            <p className="text-white/60">Loading profile...</p>
                           </div>
                         </div>
                       )}
@@ -296,23 +296,23 @@ export default function DashboardPage() {
           <div className="space-y-8">
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               <div className="space-y-2">
-                <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="text-4xl font-bold holographic-text">
                   Analytics Dashboard
                 </h2>
-                <p className="text-gray-600 text-lg">Professional insights and data analytics</p>
+                <p className="text-white/70 text-lg">Professional insights and data analytics</p>
               </div>
-              <Badge variant="default" className="bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium px-4 py-2 text-sm">
+              <Badge variant="default" className="bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border-cyan-400/30 text-cyan-300 font-medium px-4 py-2 text-sm">
                 Professional Analytics
               </Badge>
             </div>
             
             <Tabs value={activeTab} onValueChange={handleTabChange} className="space-y-8">
-              <TabsList className="desktop-tabs grid w-full grid-cols-5 glass-effect border border-white/20 p-1 h-14">
-                <TabsTrigger value="overview">Overview</TabsTrigger>
-                <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                <TabsTrigger value="users">Users</TabsTrigger>
-                <TabsTrigger value="reports">Reports</TabsTrigger>
-                <TabsTrigger value="settings">Settings</TabsTrigger>
+              <TabsList className="cyber-tabs grid w-full grid-cols-5 p-1 h-14">
+                <TabsTrigger value="overview" className="cyber-tab">Overview</TabsTrigger>
+                <TabsTrigger value="analytics" className="cyber-tab">Analytics</TabsTrigger>
+                <TabsTrigger value="users" className="cyber-tab">Users</TabsTrigger>
+                <TabsTrigger value="reports" className="cyber-tab">Reports</TabsTrigger>
+                <TabsTrigger value="settings" className="cyber-tab">Settings</TabsTrigger>
               </TabsList>
 
               <TabsContent value="overview">
@@ -324,34 +324,34 @@ export default function DashboardPage() {
               </TabsContent>
               
               <TabsContent value="users">
-                <Card className="modern-card">
+                <Card className="cyber-card">
                   <CardHeader>
-                    <CardTitle>User Management</CardTitle>
+                    <CardTitle className="matrix-text">User Management</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600">User management features coming soon...</p>
+                    <p className="text-white/60">User management features coming soon...</p>
                   </CardContent>
                 </Card>
               </TabsContent>
               
               <TabsContent value="reports">
-                <Card className="modern-card">
+                <Card className="cyber-card">
                   <CardHeader>
-                    <CardTitle>Advanced Reports</CardTitle>
+                    <CardTitle className="matrix-text">Advanced Reports</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600">Advanced reporting features coming soon...</p>
+                    <p className="text-white/60">Advanced reporting features coming soon...</p>
                   </CardContent>
                 </Card>
               </TabsContent>
               
               <TabsContent value="settings">
-                <Card className="modern-card">
+                <Card className="cyber-card">
                   <CardHeader>
-                    <CardTitle>System Settings</CardTitle>
+                    <CardTitle className="matrix-text">System Settings</CardTitle>
                   </CardHeader>
                   <CardContent>
-                    <p className="text-gray-600">System configuration options coming soon...</p>
+                    <p className="text-white/60">System configuration options coming soon...</p>
                   </CardContent>
                 </Card>
               </TabsContent>

@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Mic, MicOff, Send, Loader2, AlertTriangle, Clock, CheckCircle, DollarSign, Upload, Image, X, Check } from 'lucide-react';
+import { Mic, MicOff, Send, Loader2, AlertTriangle, Clock, CheckCircle, DollarSign, Upload, Image, X, Check, Camera, Zap, Sparkles } from 'lucide-react';
 import { processVoiceToText, formatIssueWithAI, analyzeImageWithAI } from '@/lib/ai-processor';
 import { commonIssues } from '@/lib/tata-models';
 
@@ -28,6 +28,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
   const [uploadedImage, setUploadedImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isAnalyzingImage, setIsAnalyzingImage] = useState(false);
+  const [autoAnalyzed, setAutoAnalyzed] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -75,7 +76,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
     }
   };
 
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
       if (file.size > 5 * 1024 * 1024) { // 5MB limit
@@ -89,12 +90,27 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
         setImagePreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
+
+      // Auto-analyze the image immediately
+      setIsAnalyzingImage(true);
+      setAutoAnalyzed(true);
+      try {
+        const analysis = await analyzeImageWithAI(file, vehicleModel);
+        setIssueText(analysis.description);
+        setAiAnalysis(analysis);
+      } catch (error) {
+        console.error('Auto image analysis failed:', error);
+        setAutoAnalyzed(false);
+      } finally {
+        setIsAnalyzingImage(false);
+      }
     }
   };
 
   const removeImage = () => {
     setUploadedImage(null);
     setImagePreview(null);
+    setAutoAnalyzed(false);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -168,6 +184,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
           setSelectedCategory('');
           setUploadedImage(null);
           setImagePreview(null);
+          setAutoAnalyzed(false);
           setIsSubmitted(false);
           if (fileInputRef.current) {
             fileInputRef.current.value = '';
@@ -185,262 +202,290 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
   // Success animation overlay
   if (isSubmitted) {
     return (
-      <Card className="relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-r from-green-500 to-emerald-500 flex items-center justify-center z-10">
+      <Card className="neon-card relative overflow-hidden success-animation">
+        <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 flex items-center justify-center z-10 backdrop-blur-sm">
           <div className="text-center text-white">
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce">
-              <Check className="w-8 h-8" />
+            <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 quantum-glow">
+              <Check className="w-10 h-10 text-green-400" />
             </div>
-            <h3 className="text-2xl font-bold mb-2">Issue Submitted Successfully!</h3>
-            <p className="text-green-100">Your vehicle issue has been recorded and analyzed.</p>
+            <h3 className="text-3xl font-bold mb-4 holographic-text">Issue Submitted Successfully!</h3>
+            <p className="text-green-200 text-lg">Your vehicle issue has been recorded and analyzed by AI.</p>
           </div>
         </div>
         <CardHeader>
-          <CardTitle>Report New Issue</CardTitle>
+          <CardTitle className="matrix-text">Report New Issue</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4 opacity-20">
-          <div className="h-32 bg-gray-100 rounded"></div>
-          <div className="h-8 bg-gray-100 rounded"></div>
-          <div className="h-12 bg-gray-100 rounded"></div>
+          <div className="h-32 bg-white/5 rounded-2xl"></div>
+          <div className="h-8 bg-white/5 rounded-2xl"></div>
+          <div className="h-12 bg-white/5 rounded-2xl"></div>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <Card className="bg-white/90 backdrop-blur-sm border border-slate-200 shadow-xl">
-      <CardHeader className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-t-lg">
-        <CardTitle className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-lg flex items-center justify-center">
-            <Send className="w-6 h-6" />
+    <div className="space-y-8">
+      <Card className="neon-card">
+        <CardHeader className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-t-3xl border-b border-white/10">
+          <CardTitle className="flex items-center gap-4">
+            <div className="w-14 h-14 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl flex items-center justify-center quantum-glow">
+              <Send className="w-7 h-7 text-purple-400" />
+            </div>
+            <div>
+              <span className="text-2xl font-bold holographic-text">Report Vehicle Issue</span>
+              <p className="text-sm text-white/60 font-normal mt-1">AI-powered issue analysis and diagnosis</p>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="p-8 space-y-8">
+          {/* Text Input Section with Image Upload Icon */}
+          <div className="space-y-4">
+            <Label className="text-lg font-semibold text-white/90">Describe Your Issue</Label>
+            <div className="flex gap-4">
+              <Textarea
+                placeholder="Describe the issue with your vehicle in detail..."
+                value={issueText}
+                onChange={(e) => setIssueText(e.target.value)}
+                className="flex-1 quantum-input min-h-[120px] text-white placeholder:text-white/50"
+                rows={4}
+              />
+              <div className="flex flex-col gap-3">
+                {/* Image Upload Button */}
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="h-12 w-12 cyber-glass border-white/20 hover:bg-white/10 group"
+                  title="Upload Image for AI Analysis"
+                >
+                  <div className="relative">
+                    <Camera className="w-5 h-5 text-white/70 group-hover:text-purple-400 transition-colors" />
+                    {uploadedImage && (
+                      <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
+                    )}
+                  </div>
+                </Button>
+                
+                {/* Voice Recording Button */}
+                <Button
+                  type="button"
+                  variant={isRecording ? "destructive" : "outline"}
+                  size="icon"
+                  onClick={isRecording ? stopRecording : startRecording}
+                  disabled={isProcessing}
+                  className={`h-12 w-12 ${isRecording ? 'bg-red-500/20 border-red-400 hover:bg-red-500/30' : 'cyber-glass border-white/20 hover:bg-white/10'}`}
+                >
+                  {isRecording ? <MicOff className="w-5 h-5 text-red-400" /> : <Mic className="w-5 h-5 text-white/70" />}
+                </Button>
+                
+                {/* Analyze Text Button */}
+                <Button
+                  type="button"
+                  size="icon"
+                  onClick={handleTextSubmit}
+                  disabled={!issueText.trim() || isProcessing}
+                  className="h-12 w-12 holographic-button"
+                >
+                  {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                </Button>
+              </div>
+            </div>
+            
+            {/* Hidden File Input */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              className="hidden"
+            />
           </div>
-          <div>
-            <span className="text-xl font-bold">Report New Issue</span>
-            <p className="text-sm text-blue-100 font-normal">Describe your vehicle problem</p>
-          </div>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6 space-y-6">
-        {/* Image Upload Section */}
-        <div className="space-y-4">
-          <Label className="text-sm font-semibold text-gray-700">Upload Issue Image (Optional)</Label>
-          <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 hover:border-blue-400 transition-colors">
-            {imagePreview ? (
+
+          {/* Image Preview Section */}
+          {imagePreview && (
+            <div className="space-y-4">
+              <Label className="text-lg font-semibold text-white/90 flex items-center gap-2">
+                <Camera className="w-5 h-5 text-purple-400" />
+                Uploaded Image
+              </Label>
               <div className="relative">
                 <img 
                   src={imagePreview} 
                   alt="Issue preview" 
-                  className="w-full h-48 object-cover rounded-lg"
+                  className="w-full h-64 object-cover rounded-2xl border border-white/10"
                 />
                 <Button
                   type="button"
                   variant="destructive"
                   size="sm"
                   onClick={removeImage}
-                  className="absolute top-2 right-2"
+                  className="absolute top-4 right-4 bg-red-500/80 hover:bg-red-500 backdrop-blur-sm"
                 >
                   <X className="w-4 h-4" />
                 </Button>
-                <Button
-                  type="button"
-                  onClick={analyzeImage}
-                  disabled={isAnalyzingImage}
-                  className="absolute bottom-2 right-2 bg-blue-600 hover:bg-blue-700"
-                >
-                  {isAnalyzingImage ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                  ) : (
-                    <Image className="w-4 h-4 mr-2" />
-                  )}
-                  {isAnalyzingImage ? 'Analyzing...' : 'Analyze Image'}
-                </Button>
-              </div>
-            ) : (
-              <div className="text-center">
-                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">Click to upload an image of the issue</p>
-                <p className="text-sm text-gray-500">PNG, JPG up to 5MB</p>
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageUpload}
-                  className="hidden"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => fileInputRef.current?.click()}
-                  className="mt-2"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Choose Image
-                </Button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Text Input Section */}
-        <div className="space-y-2">
-          <Label className="text-sm font-semibold text-gray-700">Describe your issue</Label>
-          <div className="flex gap-2">
-            <Textarea
-              placeholder="Describe the issue with your vehicle..."
-              value={issueText}
-              onChange={(e) => setIssueText(e.target.value)}
-              className="flex-1 border-2 border-gray-200 focus:border-blue-400 rounded-lg bg-white/80"
-              rows={3}
-            />
-            <div className="flex flex-col gap-2">
-              <Button
-                type="button"
-                variant={isRecording ? "destructive" : "outline"}
-                size="icon"
-                onClick={isRecording ? stopRecording : startRecording}
-                disabled={isProcessing}
-                className="h-10 w-10"
-              >
-                {isRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                size="icon"
-                onClick={handleTextSubmit}
-                disabled={!issueText.trim() || isProcessing}
-                className="h-10 w-10"
-              >
-                {isProcessing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-              </Button>
-            </div>
-          </div>
-        </div>
-
-        {/* Recording Status */}
-        {isRecording && (
-          <div className="flex items-center gap-2 text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
-            <div className="w-2 h-2 bg-red-600 rounded-full animate-pulse"></div>
-            Recording... Click stop when done
-          </div>
-        )}
-
-        {/* Processing Status */}
-        {(isProcessing || isAnalyzingImage) && (
-          <div className="flex items-center gap-2 text-blue-600 bg-blue-50 p-3 rounded-lg border border-blue-200">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            {isAnalyzingImage ? 'Analyzing image with AI...' : 'Gemini AI is analyzing your issue...'}
-          </div>
-        )}
-
-        {/* Quick Categories */}
-        <div className="space-y-2">
-          <Label className="text-sm font-semibold text-gray-700">Quick Issue Categories</Label>
-          <div className="flex flex-wrap gap-2">
-            {commonIssues.map((issue) => (
-              <Badge
-                key={issue}
-                variant={selectedCategory === issue ? "default" : "outline"}
-                className="cursor-pointer hover:bg-blue-100 transition-colors"
-                onClick={() => setSelectedCategory(issue)}
-              >
-                {issue}
-              </Badge>
-            ))}
-          </div>
-        </div>
-
-        {/* AI Analysis Results */}
-        {aiAnalysis && (
-          <Card className="border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 shadow-lg">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-3 h-3 text-white" />
-                </div>
-                Gemini AI Analysis
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label className="text-xs font-semibold text-gray-700">Formatted Issue Description:</Label>
-                <p className="text-sm bg-white/60 rounded-lg p-2 mt-1">{aiAnalysis.formattedIssue}</p>
-              </div>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-xs font-semibold text-gray-700">Category:</Label>
-                  <div className="mt-1">
-                    <Badge variant="secondary" className="bg-blue-100 text-blue-800">{aiAnalysis.category}</Badge>
+                {autoAnalyzed && (
+                  <div className="absolute bottom-4 left-4 bg-green-500/20 backdrop-blur-sm rounded-xl px-4 py-2 border border-green-400/30">
+                    <div className="flex items-center gap-2 text-green-400">
+                      <Sparkles className="w-4 h-4" />
+                      <span className="text-sm font-medium">Auto-analyzed by AI</span>
+                    </div>
                   </div>
-                </div>
-                <div>
-                  <Label className="text-xs font-semibold text-gray-700">Severity Level:</Label>
-                  <div className="mt-1 flex items-center gap-2">
-                    {aiAnalysis.severity === 'high' && <AlertTriangle className="w-4 h-4 text-red-500" />}
-                    {aiAnalysis.severity === 'medium' && <Clock className="w-4 h-4 text-yellow-500" />}
-                    {aiAnalysis.severity === 'low' && <CheckCircle className="w-4 h-4 text-green-500" />}
-                    <Badge variant={aiAnalysis.severity === 'high' ? 'destructive' : aiAnalysis.severity === 'medium' ? 'default' : 'secondary'}>
-                      {aiAnalysis.severity.toUpperCase()}
-                    </Badge>
+                )}
+                {!autoAnalyzed && !isAnalyzingImage && (
+                  <Button
+                    type="button"
+                    onClick={analyzeImage}
+                    className="absolute bottom-4 right-4 holographic-button"
+                  >
+                    <Zap className="w-4 h-4 mr-2" />
+                    Analyze Image
+                  </Button>
+                )}
+                {isAnalyzingImage && (
+                  <div className="absolute bottom-4 right-4 bg-blue-500/20 backdrop-blur-sm rounded-xl px-4 py-2 border border-blue-400/30">
+                    <div className="flex items-center gap-2 text-blue-400">
+                      <div className="loading-cyber w-4 h-4"></div>
+                      <span className="text-sm font-medium">Analyzing...</span>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-xs font-semibold text-gray-700">Urgency Level:</Label>
-                  <p className="text-sm bg-white/60 rounded-lg p-2 mt-1 font-medium">{aiAnalysis.urgencyLevel}</p>
-                </div>
-                <div>
-                  <Label className="text-xs font-semibold text-gray-700 flex items-center gap-1">
-                    <DollarSign className="w-3 h-3" />
-                    Estimated Cost:
-                  </Label>
-                  <p className="text-sm bg-white/60 rounded-lg p-2 mt-1 font-medium">{aiAnalysis.estimatedCost}</p>
-                </div>
-              </div>
-              
-              <div>
-                <Label className="text-xs font-semibold text-gray-700">Possible Causes:</Label>
-                <ul className="text-xs list-disc list-inside space-y-1 bg-white/60 rounded-lg p-2 mt-1">
-                  {aiAnalysis.possibleCauses.map((cause: string, index: number) => (
-                    <li key={index} className="text-gray-700">{cause}</li>
-                  ))}
-                </ul>
-              </div>
-              
-              <div>
-                <Label className="text-xs font-semibold text-gray-700">Recommended Actions:</Label>
-                <ul className="text-xs list-disc list-inside space-y-1 bg-white/60 rounded-lg p-2 mt-1">
-                  {aiAnalysis.suggestedActions.map((action: string, index: number) => (
-                    <li key={index} className="text-gray-700">{action}</li>
-                  ))}
-                </ul>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Submit Button */}
-        <Button 
-          onClick={submitIssue} 
-          className="w-full bg-gradient-to-r from-purple-500 to-blue-500 hover:from-purple-600 hover:to-blue-600 text-white shadow-lg py-3 text-lg font-semibold" 
-          disabled={!issueText.trim() || isProcessing || isSubmitting}
-        >
-          {isSubmitting ? (
-            <div className="flex items-center gap-2">
-              <Loader2 className="w-5 h-5 animate-spin" />
-              Submitting Issue...
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Send className="w-5 h-5" />
-              Submit Issue Report
             </div>
           )}
-        </Button>
-      </CardContent>
-    </Card>
+
+          {/* Recording Status */}
+          {isRecording && (
+            <div className="flex items-center gap-3 text-red-400 bg-red-500/10 p-4 rounded-2xl border border-red-400/30 backdrop-blur-sm">
+              <div className="w-3 h-3 bg-red-400 rounded-full pulse-ring"></div>
+              <span className="font-medium">Recording audio... Click stop when finished</span>
+            </div>
+          )}
+
+          {/* Processing Status */}
+          {(isProcessing || isAnalyzingImage) && (
+            <div className="flex items-center gap-3 text-blue-400 bg-blue-500/10 p-4 rounded-2xl border border-blue-400/30 backdrop-blur-sm">
+              <div className="loading-cyber w-5 h-5"></div>
+              <span className="font-medium">
+                {isAnalyzingImage ? 'AI analyzing image...' : 'Gemini AI processing your issue...'}
+              </span>
+            </div>
+          )}
+
+          {/* Quick Categories */}
+          <div className="space-y-4">
+            <Label className="text-lg font-semibold text-white/90">Quick Issue Categories</Label>
+            <div className="flex flex-wrap gap-3">
+              {commonIssues.map((issue) => (
+                <Badge
+                  key={issue}
+                  variant={selectedCategory === issue ? "default" : "outline"}
+                  className={`cursor-pointer transition-all duration-300 px-4 py-2 text-sm ${
+                    selectedCategory === issue 
+                      ? 'bg-purple-500/30 border-purple-400 text-purple-200 quantum-glow' 
+                      : 'bg-white/5 border-white/20 text-white/70 hover:bg-white/10 hover:border-white/30'
+                  }`}
+                  onClick={() => setSelectedCategory(issue)}
+                >
+                  {issue}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* AI Analysis Results */}
+          {aiAnalysis && (
+            <Card className="data-stream">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-lg flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full flex items-center justify-center">
+                    <CheckCircle className="w-4 h-4 text-cyan-400" />
+                  </div>
+                  <span className="matrix-text">AI Analysis Complete</span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div>
+                  <Label className="text-sm font-semibold text-white/80">Formatted Issue Description:</Label>
+                  <p className="text-sm bg-white/5 rounded-xl p-4 mt-2 text-white/90 border border-white/10">{aiAnalysis.formattedIssue}</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label className="text-sm font-semibold text-white/80">Category:</Label>
+                    <div className="mt-2">
+                      <Badge className="bg-blue-500/20 border-blue-400 text-blue-200">{aiAnalysis.category}</Badge>
+                    </div>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-semibold text-white/80">Severity Level:</Label>
+                    <div className="mt-2 flex items-center gap-2">
+                      {aiAnalysis.severity === 'high' && <AlertTriangle className="w-4 h-4 text-red-400" />}
+                      {aiAnalysis.severity === 'medium' && <Clock className="w-4 h-4 text-yellow-400" />}
+                      {aiAnalysis.severity === 'low' && <CheckCircle className="w-4 h-4 text-green-400" />}
+                      <Badge variant={aiAnalysis.severity === 'high' ? 'destructive' : aiAnalysis.severity === 'medium' ? 'default' : 'secondary'}>
+                        {aiAnalysis.severity.toUpperCase()}
+                      </Badge>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <Label className="text-sm font-semibold text-white/80">Urgency Level:</Label>
+                    <p className="text-sm bg-white/5 rounded-xl p-3 mt-2 font-medium text-white/90 border border-white/10">{aiAnalysis.urgencyLevel}</p>
+                  </div>
+                  <div>
+                    <Label className="text-sm font-semibold text-white/80 flex items-center gap-1">
+                      <DollarSign className="w-3 h-3" />
+                      Estimated Cost:
+                    </Label>
+                    <p className="text-sm bg-white/5 rounded-xl p-3 mt-2 font-medium text-white/90 border border-white/10">{aiAnalysis.estimatedCost}</p>
+                  </div>
+                </div>
+                
+                <div>
+                  <Label className="text-sm font-semibold text-white/80">Possible Causes:</Label>
+                  <ul className="text-sm list-disc list-inside space-y-2 bg-white/5 rounded-xl p-4 mt-2 border border-white/10">
+                    {aiAnalysis.possibleCauses.map((cause: string, index: number) => (
+                      <li key={index} className="text-white/80">{cause}</li>
+                    ))}
+                  </ul>
+                </div>
+                
+                <div>
+                  <Label className="text-sm font-semibold text-white/80">Recommended Actions:</Label>
+                  <ul className="text-sm list-disc list-inside space-y-2 bg-white/5 rounded-xl p-4 mt-2 border border-white/10">
+                    {aiAnalysis.suggestedActions.map((action: string, index: number) => (
+                      <li key={index} className="text-white/80">{action}</li>
+                    ))}
+                  </ul>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Submit Button */}
+          <Button 
+            onClick={submitIssue} 
+            className="w-full holographic-button py-4 text-lg font-semibold" 
+            disabled={!issueText.trim() || isProcessing || isSubmitting}
+          >
+            {isSubmitting ? (
+              <div className="flex items-center gap-3">
+                <div className="loading-cyber w-6 h-6"></div>
+                Submitting Issue...
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Send className="w-6 h-6" />
+                Submit Issue Report
+              </div>
+            )}
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
   );
 }
