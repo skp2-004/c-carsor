@@ -664,7 +664,10 @@ export default function ModernAnalyticsDashboard() {
                       outerRadius={80}
                       fill="#8884d8"
                       dataKey="count"
-                      label={({ category, percentage }) => `${category}: ${percentage}%`}
+                      label={({ category, percentage }: { category: string; percentage: number }) =>
+  `${category}: ${percentage}%`
+}
+
                     >
                       {data.issuesByCategory.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
