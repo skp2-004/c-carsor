@@ -2,10 +2,11 @@
 
 import * as React from 'react';
 import * as RechartsPrimitive from 'recharts';
-
 import { cn } from '@/lib/utils';
 
-// Format: { THEME_NAME: CSS_SELECTOR }
+// Fix: Cast ResponsiveContainer properly
+const ResponsiveContainer = RechartsPrimitive.ResponsiveContainer as unknown as React.FC<any>;
+
 const THEMES = { light: '', dark: '.dark' } as const;
 
 export type ChartConfig = {
@@ -26,11 +27,7 @@ const ChartContext = React.createContext<ChartContextProps | null>(null);
 
 function useChart() {
   const context = React.useContext(ChartContext);
-
-  if (!context) {
-    throw new Error('useChart must be used within a <ChartContainer />');
-  }
-
+  if (!context) throw new Error('useChart must be used within a <ChartContainer />');
   return context;
 }
 
@@ -39,7 +36,6 @@ const ChartContainer = React.forwardRef<
   React.ComponentProps<'div'> & {
     config: ChartConfig;
     children?: React.ReactNode;
-
   }
 >(({ id, className, children, config, ...props }, ref) => {
   const uniqueId = React.useId();
@@ -57,12 +53,9 @@ const ChartContainer = React.forwardRef<
         {...props}
       >
         <ChartStyle id={chartId} config={config} />
-        const ResponsiveContainer = RechartsPrimitive.ResponsiveContainer as unknown as React.FC<any>;
-...
-<ResponsiveContainer>
-  {children}
-</ResponsiveContainer>
-
+        <ResponsiveContainer>
+          {children}
+        </ResponsiveContainer>
       </div>
     </ChartContext.Provider>
   );
@@ -74,9 +67,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     ([_, config]) => config.theme || config.color
   );
 
-  if (!colorConfig.length) {
-    return null;
-  }
+  if (!colorConfig.length) return null;
 
   return (
     <style
@@ -136,9 +127,7 @@ const ChartTooltipContent = React.forwardRef<
     const { config } = useChart();
 
     const tooltipLabel = React.useMemo(() => {
-      if (hideLabel || !payload?.length) {
-        return null;
-      }
+      if (hideLabel || !payload?.length) return null;
 
       const [item] = payload;
       const key = `${labelKey || item.dataKey || item.name || 'value'}`;
@@ -156,9 +145,7 @@ const ChartTooltipContent = React.forwardRef<
         );
       }
 
-      if (!value) {
-        return null;
-      }
+      if (!value) return null;
 
       return <div className={cn('font-medium', labelClassName)}>{value}</div>;
     }, [
@@ -171,9 +158,7 @@ const ChartTooltipContent = React.forwardRef<
       labelKey,
     ]);
 
-    if (!active || !payload?.length) {
-      return null;
-    }
+    if (!active || !payload?.length) return null;
 
     const nestLabel = payload.length === 1 && indicator !== 'dot';
 
@@ -219,12 +204,10 @@ const ChartTooltipContent = React.forwardRef<
                               'my-0.5': nestLabel && indicator === 'dashed',
                             }
                           )}
-                          style={
-                            {
-                              '--color-bg': indicatorColor,
-                              '--color-border': indicatorColor,
-                            } as React.CSSProperties
-                          }
+                          style={{
+                            '--color-bg': indicatorColor,
+                            '--color-border': indicatorColor,
+                          } as React.CSSProperties}
                         />
                       )
                     )}
@@ -267,66 +250,48 @@ const ChartLegendContent = React.forwardRef<
       hideIcon?: boolean;
       nameKey?: string;
     }
->(
-  (
-    { className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey },
-    ref
-  ) => {
-    const { config } = useChart();
+>(({ className, hideIcon = false, payload, verticalAlign = 'bottom', nameKey }, ref) => {
+  const { config } = useChart();
 
-    if (!payload?.length) {
-      return null;
-    }
+  if (!payload?.length) return null;
 
-    return (
-      <div
-        ref={ref}
-        className={cn(
-          'flex items-center justify-center gap-4',
-          verticalAlign === 'top' ? 'pb-3' : 'pt-3',
-          className
-        )}
-      >
-        {payload.map((item) => {
-          const key = `${nameKey || item.dataKey || 'value'}`;
-          const itemConfig = getPayloadConfigFromPayload(config, item, key);
+  return (
+    <div
+      ref={ref}
+      className={cn(
+        'flex items-center justify-center gap-4',
+        verticalAlign === 'top' ? 'pb-3' : 'pt-3',
+        className
+      )}
+    >
+      {payload.map((item) => {
+        const key = `${nameKey || item.dataKey || 'value'}`;
+        const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
-          return (
-            <div
-              key={item.value}
-              className={cn(
-                'flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground'
-              )}
-            >
-              {itemConfig?.icon && !hideIcon ? (
-                <itemConfig.icon />
-              ) : (
-                <div
-                  className="h-2 w-2 shrink-0 rounded-[2px]"
-                  style={{
-                    backgroundColor: item.color,
-                  }}
-                />
-              )}
-              {itemConfig?.label}
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
-);
+        return (
+          <div
+            key={item.value}
+            className={cn('flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-muted-foreground')}
+          >
+            {itemConfig?.icon && !hideIcon ? (
+              <itemConfig.icon />
+            ) : (
+              <div
+                className="h-2 w-2 shrink-0 rounded-[2px]"
+                style={{ backgroundColor: item.color }}
+              />
+            )}
+            {itemConfig?.label}
+          </div>
+        );
+      })}
+    </div>
+  );
+});
 ChartLegendContent.displayName = 'ChartLegend';
 
-// Helper to extract item config from a payload.
-function getPayloadConfigFromPayload(
-  config: ChartConfig,
-  payload: unknown,
-  key: string
-) {
-  if (typeof payload !== 'object' || payload === null) {
-    return undefined;
-  }
+function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string) {
+  if (typeof payload !== 'object' || payload === null) return undefined;
 
   const payloadPayload =
     'payload' in payload &&
@@ -347,9 +312,7 @@ function getPayloadConfigFromPayload(
     key in payloadPayload &&
     typeof payloadPayload[key as keyof typeof payloadPayload] === 'string'
   ) {
-    configLabelKey = payloadPayload[
-      key as keyof typeof payloadPayload
-    ] as string;
+    configLabelKey = payloadPayload[key as keyof typeof payloadPayload] as string;
   }
 
   return configLabelKey in config
