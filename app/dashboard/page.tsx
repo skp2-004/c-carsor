@@ -109,7 +109,8 @@ export default function DashboardPage() {
           userType={isVehicleOwner ? 'vehicle_owner' : 'service_provider'}
           activeTab={activeTab}
           onTabChange={handleTabChange}
-          userName={session.user?.name}
+          userName={session.user?.name ?? undefined}
+
         />
       )}
 
