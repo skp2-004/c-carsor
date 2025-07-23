@@ -4,8 +4,34 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
+import {
+  ResponsiveContainer as RC,
+  BarChart as BC,
+  PieChart as PC,
+  LineChart as LC,
+  XAxis as X,
+  YAxis as Y,
+  CartesianGrid as CG,
+  Tooltip as TT,
+  Bar as B,
+  Pie as P,
+  Cell as C,
+  Line as L
+} from 'recharts';
 import { TrendingUp, AlertTriangle, Wrench, Car, Users, Clock } from 'lucide-react';
+// Cast to bypass JSX incompatibility
+const ResponsiveContainer = RC as unknown as ComponentType<any>;
+const BarChart = BC as unknown as ComponentType<any>;
+const PieChart = PC as unknown as ComponentType<any>;
+const LineChart = LC as unknown as ComponentType<any>;
+const XAxis = X as unknown as ComponentType<any>;
+const YAxis = Y as unknown as ComponentType<any>;
+const CartesianGrid = CG as unknown as ComponentType<any>;
+const Tooltip = TT as unknown as ComponentType<any>;
+const Bar = B as unknown as ComponentType<any>;
+const Pie = P as unknown as ComponentType<any>;
+const Cell = C as unknown as ComponentType<any>;
+const Line = L as unknown as ComponentType<any>;
 
 interface Issue {
   _id: string;
