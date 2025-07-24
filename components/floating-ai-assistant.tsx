@@ -86,7 +86,7 @@ export default function FloatingAIAssistant() {
     setConversationId(newConversationId);
     setMessages([{
       id: '1',
-      text: 'Hello! I\'m your intelligent Tata Motors AI assistant powered by Gemini AI. I can help you with vehicle maintenance, troubleshooting, service schedules, and analyze your reported issues. How can I assist you today?',
+      text: 'Hello! I\'m your intelligent Tata Motors AI assistant powered by AutoDoc AI. I can help you with vehicle maintenance, troubleshooting, service schedules, and analyze your reported issues. How can I assist you today?',
       sender: 'bot',
       timestamp: new Date(),
     }]);
@@ -396,7 +396,7 @@ export default function FloatingAIAssistant() {
                     </div>
                     <div className="flex items-center justify-between mt-1">
                       <p className="text-xs text-gray-500">
-                        Powered by Gemini AI
+                        Powered by AutoDoc AI
                       </p>
                       <p className="text-xs text-gray-400">
                         {input.length}/500
