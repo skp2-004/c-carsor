@@ -181,7 +181,8 @@ export default function HomePage() {
                 onClick={() => router.push('/auth/signin')}
                 className="border-white/20 text-white hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-medium group"
               >
-                <Shield className="w-6 h-6 mr-3 group-hover:scale-110 transition-transform" />
+                <Shield className="w-6 h-6 mr-3 stroke-gray-500 group-hover:scale-110 transition-transform" />
+
                 Enterprise Access
               </Button>
             </div>
