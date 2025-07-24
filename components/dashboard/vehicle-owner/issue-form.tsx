@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,7 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Mic, MicOff, Send, Loader2, AlertTriangle, Clock, CheckCircle, DollarSign, Upload, Image, X, Check, Camera, Zap, Sparkles } from 'lucide-react';
+import { Mic, MicOff, Send, Loader2, AlertTriangle, Clock, CheckCircle, DollarSign, Upload, X, Check, Camera, Zap, Sparkles, ImageIcon } from 'lucide-react';
 import { processVoiceToText, formatIssueWithAI, analyzeImageWithAI } from '@/lib/ai-processor';
 import { commonIssues } from '@/lib/tata-models';
 
@@ -95,7 +96,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
       setIsAnalyzingImage(true);
       setAutoAnalyzed(true);
       try {
-        const analysis = await analyzeImageWithAI(file, vehicleModel);
+        const analysis = await analyzeImageWithAI(file, vehicleModel || 'Unknown');
         setIssueText(analysis.description);
         setAiAnalysis(analysis);
       } catch (error) {
@@ -121,7 +122,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
     
     setIsAnalyzingImage(true);
     try {
-      const analysis = await analyzeImageWithAI(uploadedImage, vehicleModel);
+      const analysis = await analyzeImageWithAI(uploadedImage, vehicleModel || 'Unknown');
       setIssueText(analysis.description);
       setAiAnalysis(analysis);
     } catch (error) {
@@ -135,7 +136,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
   const handleTextSubmit = async () => {
     if (!issueText.trim()) return;
     
-    setIsProcessing(true);
+    setIsProcessing(true); 
     try {
       const analysis = await formatIssueWithAI(issueText, vehicleModel);
       setAiAnalysis(analysis);
@@ -202,7 +203,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
   // Success animation overlay
   if (isSubmitted) {
     return (
-      <Card className="neon-card relative overflow-hidden success-animation">
+      <Card className="bg-black/20 backdrop-blur-xl border border-white/10 shadow-2xl relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 flex items-center justify-center z-10 backdrop-blur-sm">
           <div className="text-center text-white">
             <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 quantum-glow">
@@ -226,7 +227,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
 
   return (
     <div className="space-y-8">
-      <Card className="neon-card">
+      <Card className="bg-black/20 backdrop-blur-xl border border-white/10 shadow-2xl">
         <CardHeader className="bg-gradient-to-r from-purple-600/20 to-blue-600/20 rounded-t-3xl border-b border-white/10">
           <CardTitle className="flex items-center gap-4">
             <div className="w-14 h-14 bg-gradient-to-r from-purple-500/20 to-blue-500/20 rounded-2xl flex items-center justify-center quantum-glow">
@@ -242,7 +243,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
           {/* Text Input Section with Image Upload Icon */}
           <div className="space-y-4">
             <Label className="text-lg font-semibold text-white/90">Describe Your Issue</Label>
-            <div className="flex gap-4">
+            <div className="flex gap-3">
               <Textarea
                 placeholder="Describe the issue with your vehicle in detail..."
                 value={issueText}
@@ -250,9 +251,9 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
                 className="flex-1 quantum-input min-h-[120px] text-white placeholder:text-white/50"
                 rows={4}
               />
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-2">
                 {/* Image Upload Button */}
-                <Button
+                <Button 
                   type="button"
                   variant="outline"
                   size="icon"
@@ -261,7 +262,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
                   title="Upload Image for AI Analysis"
                 >
                   <div className="relative">
-                    <Camera className="w-5 h-5 text-white/70 group-hover:text-purple-400 transition-colors" />
+                    <ImageIcon className="w-5 h-5 text-white/70 group-hover:text-purple-400 transition-colors" />
                     {uploadedImage && (
                       <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                     )}
@@ -306,7 +307,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
           {/* Image Preview Section */}
           {imagePreview && (
             <div className="space-y-4">
-              <Label className="text-lg font-semibold text-white/90 flex items-center gap-2">
+              <Label className="text-lg font-semibold text-white/90 flex items-center gap-2"> 
                 <Camera className="w-5 h-5 text-purple-400" />
                 Uploaded Image
               </Label>
@@ -396,7 +397,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
 
           {/* AI Analysis Results */}
           {aiAnalysis && (
-            <Card className="data-stream">
+            <Card className="bg-black/10 backdrop-blur-xl border border-white/10">
               <CardHeader className="pb-4">
                 <CardTitle className="text-lg flex items-center gap-3">
                   <div className="w-8 h-8 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 rounded-full flex items-center justify-center">

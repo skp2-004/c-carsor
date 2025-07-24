@@ -1,21 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { 
   Menu, 
-  Car, 
+  X, 
+  Home, 
   FileText, 
   History, 
   User, 
   BarChart3, 
   Users, 
-  Settings, 
-  FileBarChart,
-  X,
-  Zap
+  Settings,
+  Bell,
+  Search,
+  Plus,
+  Bookmark,
+  Mail,
+  MessageCircle,
+  TrendingUp,
+  Car,
+  Wrench,
+  Shield,
+  Activity
 } from 'lucide-react';
 
 interface MobileSidebarProps {
@@ -27,19 +36,32 @@ interface MobileSidebarProps {
 
 export default function MobileSidebar({ userType, activeTab, onTabChange, userName }: MobileSidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const vehicleOwnerTabs = [
-    { id: 'report', label: 'Report Issue', icon: FileText },
-    { id: 'history', label: 'Issue History', icon: History },
-    { id: 'profile', label: 'Profile', icon: User },
+    { id: 'report', label: 'Report Issue', icon: <FileText className="w-5 h-5" /> },
+    { id: 'history', label: 'Issue History', icon: <History className="w-5 h-5" /> },
+    { id: 'profile', label: 'Profile', icon: <User className="w-5 h-5" /> },
   ];
 
   const serviceProviderTabs = [
-    { id: 'overview', label: 'Overview', icon: BarChart3 },
-    { id: 'analytics', label: 'Analytics', icon: FileBarChart },
-    { id: 'users', label: 'Users', icon: Users },
-    { id: 'reports', label: 'Reports', icon: FileText },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'overview', label: 'Overview', icon: <Home className="w-5 h-5" /> },
+    { id: 'analytics', label: 'Analytics', icon: <BarChart3 className="w-5 h-5" /> },
+    { id: 'trends', label: 'Trends', icon: <TrendingUp className="w-5 h-5" /> },
+    { id: 'users', label: 'Users', icon: <Users className="w-5 h-5" /> },
+    { id: 'reports', label: 'Reports', icon: <FileText className="w-5 h-5" /> },
+    { id: 'settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> },
   ];
 
   const tabs = userType === 'vehicle_owner' ? vehicleOwnerTabs : serviceProviderTabs;
@@ -49,101 +71,174 @@ export default function MobileSidebar({ userType, activeTab, onTabChange, userNa
     setIsOpen(false);
   };
 
+  if (!isMobile) {
+    return null;
+  }
+
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          className="fixed top-4 left-4 z-50 md:hidden bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white"
-        >
-          <Menu className="w-6 h-6" />
-        </Button>
-      </SheetTrigger>
-      
-      <SheetContent 
-        side="left" 
-        className="w-80 p-0 cyber-sidebar border-r border-cyan-400/20"
-      >
-        <SheetHeader className="p-6 border-b border-white/10">
-          <div className="flex items-center justify-between">
+    <>
+      {/* Mobile Header with Menu Button */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-b border-white/10">
+        <div className="flex items-center justify-between p-4">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsOpen(true)}
+            className="text-white hover:bg-white/10"
+          >
+            <Menu className="w-6 h-6" />
+          </Button>
+          
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl flex items-center justify-center">
+              <Car className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+              Carsor AI
+            </span>
+          </div>
+
+          <Button variant="ghost" size="icon" className="text-white hover:bg-white/10">
+            <Bell className="w-5 h-5" />
+          </Button>
+        </div>
+      </div>
+
+      {/* Overlay */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 md:hidden"
+          onClick={() => setIsOpen(false)}
+        />
+      )}
+
+      {/* Twitter/X Style Sidebar */}
+      <div className={`fixed top-0 left-0 h-full w-80 bg-black/95 backdrop-blur-xl border-r border-white/10 z-50 transform transition-transform duration-300 ease-in-out md:hidden ${
+        isOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
+        <div className="flex flex-col h-full">
+          {/* Header */}
+          <div className="flex items-center justify-between p-6 border-b border-white/10">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 rounded-xl flex items-center justify-center quantum-glow">
-                <Car className="w-6 h-6 text-cyan-400" />
+              <div className="w-10 h-10 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl flex items-center justify-center">
+                <Car className="w-6 h-6 text-white" />
               </div>
               <div>
-                <SheetTitle className="text-lg font-bold holographic-text">
+                <h2 className="text-lg font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
                   Carsor AI
-                </SheetTitle>
-                <p className="text-xs text-white/60">Professional Platform</p>
+                </h2>
+                <p className="text-xs text-gray-400">Professional Platform</p>
               </div>
             </div>
             <Button
               variant="ghost"
               size="icon"
               onClick={() => setIsOpen(false)}
-              className="text-white/70 hover:text-white hover:bg-white/10"
+              className="text-white hover:bg-white/10"
             >
               <X className="w-5 h-5" />
             </Button>
           </div>
-          
-          {userName && (
-            <div className="mt-4 p-4 bg-white/5 rounded-xl border border-white/10">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-gradient-to-r from-cyan-400/20 to-purple-400/20 rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-cyan-400" />
+
+          {/* User Profile Section */}
+          <div className="p-6 border-b border-white/10">
+            <div className="flex items-center gap-3 mb-4">
+              <Avatar className="w-12 h-12 border-2 border-cyan-400/30">
+                <AvatarFallback className="bg-gradient-to-r from-cyan-500 to-purple-500 text-white font-semibold">
+                  {userName?.charAt(0)?.toUpperCase() || 'U'}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex-1">
+                <p className="text-white font-semibold truncate">{userName || 'User'}</p>
+                <Badge 
+                  variant="outline" 
+                  className="text-xs border-cyan-400/30 text-cyan-300 bg-cyan-500/10"
+                >
+                  {userType === 'vehicle_owner' ? 'Vehicle Owner' : 'Service Provider'}
+                </Badge>
+              </div>
+            </div>
+            
+            {/* Quick Stats */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+                <div className="flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-green-400" />
+                  <span className="text-xs text-gray-400">Active</span>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-white">{userName}</p>
-                  <Badge variant="outline" className="border-cyan-400/30 text-cyan-300 bg-cyan-500/10 text-xs">
-                    {userType === 'vehicle_owner' ? 'Vehicle Owner' : 'Service Provider'}
-                  </Badge>
+                <p className="text-sm font-semibold text-white mt-1">Online</p>
+              </div>
+              <div className="bg-white/5 rounded-xl p-3 border border-white/10">
+                <div className="flex items-center gap-2">
+                  <Shield className="w-4 h-4 text-cyan-400" />
+                  <span className="text-xs text-gray-400">Status</span>
+                </div>
+                <p className="text-sm font-semibold text-white mt-1">Verified</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Navigation Menu */}
+          <div className="flex-1 overflow-y-auto py-4">
+            <nav className="space-y-2 px-4">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => handleTabClick(tab.id)}
+                  className={`w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-left transition-all duration-200 group ${
+                    activeTab === tab.id
+                      ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-white border border-cyan-400/30'
+                      : 'text-gray-400 hover:text-white hover:bg-white/5'
+                  }`}
+                >
+                  <div className={`transition-colors ${
+                    activeTab === tab.id ? 'text-cyan-400' : 'text-gray-500 group-hover:text-cyan-400'
+                  }`}>
+                    {tab.icon}
+                  </div>
+                  <span className="font-medium">{tab.label}</span>
+                  {activeTab === tab.id && (
+                    <div className="ml-auto w-2 h-2 bg-cyan-400 rounded-full animate-pulse" />
+                  )}
+                </button>
+              ))}
+            </nav>
+
+            {/* Additional Menu Items */}
+            <div className="mt-8 px-4">
+              <div className="border-t border-white/10 pt-4">
+                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-4">
+                  Quick Actions
+                </h3>
+                <div className="space-y-2">
+                  <button className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200">
+                    <Search className="w-5 h-5" />
+                    <span className="font-medium">Search</span>
+                  </button>
+                  <button className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200">
+                    <Bookmark className="w-5 h-5" />
+                    <span className="font-medium">Bookmarks</span>
+                  </button>
+                  <button className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200">
+                    <MessageCircle className="w-5 h-5" />
+                    <span className="font-medium">Messages</span>
+                  </button>
                 </div>
               </div>
             </div>
-          )}
-        </SheetHeader>
+          </div>
 
-        <div className="p-6">
-          <nav className="space-y-2">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              
-              return (
-                <Button
-                  key={tab.id}
-                  variant="ghost"
-                  onClick={() => handleTabClick(tab.id)}
-                  className={`w-full justify-start gap-3 h-12 text-left transition-all duration-300 ${
-                    isActive 
-                      ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-400/30 text-cyan-300 quantum-glow' 
-                      : 'text-white/70 hover:text-white hover:bg-white/10 border border-transparent'
-                  }`}
-                >
-                  <Icon className={`w-5 h-5 ${isActive ? 'text-cyan-400' : 'text-white/60'}`} />
-                  <span className="font-medium">{tab.label}</span>
-                  {isActive && (
-                    <div className="ml-auto">
-                      <Zap className="w-4 h-4 text-cyan-400 animate-pulse" />
-                    </div>
-                  )}
-                </Button>
-              );
-            })}
-          </nav>
-
-          <div className="mt-8 p-4 bg-gradient-to-r from-cyan-500/10 to-purple-500/10 rounded-xl border border-cyan-400/20">
-            <div className="flex items-center gap-2 mb-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-white">System Status</span>
-            </div>
-            <p className="text-xs text-white/60">All systems operational</p>
-            <p className="text-xs text-cyan-400 mt-1">AI Engine: Active</p>
+          {/* Footer */}
+          <div className="p-4 border-t border-white/10">
+            <Button 
+              className="w-full bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white rounded-2xl py-3 font-semibold"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              New Action
+            </Button>
           </div>
         </div>
-      </SheetContent>
-    </Sheet>
+      </div>
+    </>
   );
 }
