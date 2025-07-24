@@ -44,19 +44,39 @@ export async function POST(request: NextRequest) {
       { _id: new ObjectId((session.user as any).id) }
     );
 
-    // Get user issues
-    const userIssues = await db.collection('issues')
+    const isServiceProvider = user?.userType === 'service_provider';
+    let contextData = '';
+    
+    if (isServiceProvider) {
+      // For service providers, get analytics data
+      const allIssues = await db.collection('issues')
+        .find({})
+        .sort({ createdAt: -1 })
+        .limit(50)
+        .toArray();
+      
+      contextData = `service_provider analytics data: ${allIssues.length} total issues`;
+    } else {
+      // For vehicle owners, get their issues
+      const userIssues = await db.collection('issues')
+        .find({ userId: new ObjectId((session.user as any).id) })
+        .sort({ createdAt: -1 })
+        .limit(10)
+        .toArray();
+      
+      contextData = user?.vehicleModel 
+        ? `User owns a ${user.vehicleModel} (${user.vehicleYear || 'Unknown year'})` 
+        : 'User is a Carsor Motors vehicle owner';
+    }
+
+    const userIssues = isServiceProvider ? [] : await db.collection('issues')
       .find({ userId: new ObjectId((session.user as any).id) })
       .sort({ createdAt: -1 })
       .limit(10)
       .toArray();
 
-    const vehicleContext = user?.vehicleModel 
-      ? `User owns a ${user.vehicleModel} (${user.vehicleYear || 'Unknown year'})` 
-      : 'User is a Carsor Motors vehicle owner';
-
     // Generate AI response
-    const aiResponse = await generateGeminiResponse(message, vehicleContext, userIssues);
+    const aiResponse = await generateGeminiResponse(message, contextData, userIssues);
 
     const currentConvId = conversationId || new ObjectId().toString();
 

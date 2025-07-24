@@ -3,6 +3,73 @@ const GEMINI_API_URL = `https://generativelanguage.googleapis.com/v1/models/gemi
 
 export async function generateGeminiResponse(message: string, context?: string, userIssues?: any[]): Promise<string> {
   try {
+    // Check if user is a service provider based on context
+    const isServiceProvider = context?.includes('service_provider') || context?.includes('analytics');
+    
+    if (isServiceProvider) {
+      // Service provider analytics-focused responses
+      const analyticsKeywords = [
+        'analytics', 'data', 'trends', 'reports', 'insights', 'metrics', 'dashboard',
+        'manufacturing', 'defects', 'quality', 'issues', 'statistics', 'analysis',
+        'performance', 'resolution', 'severity', 'category', 'model', 'vehicle',
+        'export', 'chart', 'graph', 'visualization', 'kpi', 'benchmark'
+      ];
+      
+      const isAnalyticsRelated = analyticsKeywords.some(keyword => 
+        message.toLowerCase().includes(keyword)
+      );
+      
+      if (!isAnalyticsRelated) {
+        return "I'm specialized in helping with analytics data interpretation, trend analysis, and business insights for vehicle service operations. Please ask me about data trends, manufacturing insights, quality metrics, or report generation.";
+      }
+      
+      const prompt = `
+You are an expert analytics AI assistant for automotive service providers. You specialize in:
+- Data interpretation and trend analysis
+- Manufacturing defect insights
+- Quality metrics evaluation
+- Business intelligence recommendations
+- Report generation guidance
+- Performance benchmarking
+- Strategic decision support
+
+IMPORTANT: Focus only on analytics, data interpretation, and business insights related to automotive service operations.
+
+${context ? `Context: ${context}` : ''}
+
+User message: ${message}
+
+Provide analytical insights, data interpretation, and strategic recommendations based on automotive service data.`;
+
+      const response = await fetch(GEMINI_API_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{
+              text: prompt
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.3,
+            topK: 20,
+            topP: 0.8,
+            maxOutputTokens: 1024,
+          }
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`Gemini API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.candidates?.[0]?.content?.parts?.[0]?.text || 'I apologize, but I encountered an issue processing your analytics request. Please try again.';
+    }
+    
+    // Vehicle owner responses (existing logic)
     const vehicleKeywords = [
       'car', 'vehicle', 'engine', 'brake', 'tire', 'oil', 'battery', 'transmission', 'suspension',
       'steering', 'clutch', 'gear', 'fuel', 'exhaust', 'radiator', 'alternator', 'starter',

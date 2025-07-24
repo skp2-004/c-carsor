@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -19,7 +20,9 @@ import {
   Minimize2,
   Maximize2,
   Sparkles,
-  Clock
+  Clock,
+  BarChart3,
+  TrendingUp
 } from 'lucide-react';
 
 interface Message {
@@ -38,6 +41,7 @@ interface Conversation {
 }
 
 export default function FloatingAIAssistant() {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
@@ -48,6 +52,8 @@ export default function FloatingAIAssistant() {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const isServiceProvider = (session?.user as any)?.userType === 'service_provider';
 
   useEffect(() => {
     if (isOpen && !conversationId) {
@@ -84,9 +90,14 @@ export default function FloatingAIAssistant() {
   const startNewChat = () => {
     const newConversationId = new Date().getTime().toString();
     setConversationId(newConversationId);
+    
+    const welcomeMessage = isServiceProvider ? 
+      'Hello! I\'m your intelligent analytics assistant powered by AutoDoc AI. I can help you analyze vehicle data, interpret trends, understand manufacturing insights, generate reports, and provide strategic recommendations based on your analytics dashboard. How can I assist you today?' :
+      'Hello! I\'m your intelligent Tata Motors AI assistant powered by AutoDoc AI. I can help you with vehicle maintenance, troubleshooting, service schedules, and analyze your reported issues. How can I assist you today?';
+    
     setMessages([{
       id: '1',
-      text: 'Hello! I\'m your intelligent Tata Motors AI assistant powered by AutoDoc AI. I can help you with vehicle maintenance, troubleshooting, service schedules, and analyze your reported issues. How can I assist you today?',
+      text: welcomeMessage,
       sender: 'bot',
       timestamp: new Date(),
     }]);
@@ -198,7 +209,7 @@ export default function FloatingAIAssistant() {
           size="icon"
         >
           <div className="relative">
-            <Bot className="w-6 h-6 text-white" />
+            {isServiceProvider ? <BarChart3 className="w-6 h-6 text-white" /> : <Bot className="w-6 h-6 text-white" />}
             <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
           </div>
         </Button>
@@ -217,16 +228,20 @@ export default function FloatingAIAssistant() {
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <div className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                    <Bot className="w-5 h-5" />
+                    {isServiceProvider ? <BarChart3 className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
                   </div>
                   <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1">
-                    <span className="text-sm font-bold truncate">Tata AI Assistant</span>
+                    <span className="text-sm font-bold truncate">
+                      {isServiceProvider ? 'Analytics AI' : 'Tata AI Assistant'}
+                    </span>
                     <Sparkles className="w-3 h-3 text-yellow-300 flex-shrink-0" />
                   </div>
-                  <p className="text-xs text-purple-100 font-normal">Powered by Gemini AI</p>
+                  <p className="text-xs text-purple-100 font-normal">
+                    {isServiceProvider ? 'Data Analytics Expert' : 'Powered by Gemini AI'}
+                  </p>
                 </div>
               </div>
               <div className="flex gap-1">
@@ -323,7 +338,7 @@ export default function FloatingAIAssistant() {
                             {message.sender === 'bot' && (
                               <Avatar className="w-6 h-6 border border-purple-200 flex-shrink-0">
                                 <AvatarFallback className="bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs">
-                                  <Bot className="w-3 h-3" />
+                                  {isServiceProvider ? <BarChart3 className="w-3 h-3" /> : <Bot className="w-3 h-3" />}
                                 </AvatarFallback>
                               </Avatar>
                             )}
@@ -355,7 +370,7 @@ export default function FloatingAIAssistant() {
                         <div className="flex gap-2 justify-start">
                           <Avatar className="w-6 h-6 border border-purple-200 flex-shrink-0">
                             <AvatarFallback className="bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs">
-                              <Bot className="w-3 h-3" />
+                              {isServiceProvider ? <BarChart3 className="w-3 h-3" /> : <Bot className="w-3 h-3" />}
                             </AvatarFallback>
                           </Avatar>
                           <div className="bg-gray-100 rounded-lg rounded-bl-sm px-3 py-2 text-xs border border-gray-200 shadow-sm">
@@ -365,7 +380,7 @@ export default function FloatingAIAssistant() {
                                 <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
                                 <div className="w-1.5 h-1.5 bg-purple-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                               </div>
-                              <span className="text-gray-500 text-xs">AI thinking...</span>
+                              <span className="text-gray-500 text-xs">AI analyzing...</span>
                             </div>
                           </div>
                         </div>
@@ -377,7 +392,7 @@ export default function FloatingAIAssistant() {
                   <div className="p-3 border-t bg-gray-50/50 backdrop-blur-sm flex-shrink-0">
                     <div className="flex gap-2">
                       <Input
-                        placeholder="Ask about your vehicle..."
+                        placeholder={isServiceProvider ? "Ask about analytics data..." : "Ask about your vehicle..."}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         onKeyPress={handleKeyPress}
@@ -396,7 +411,7 @@ export default function FloatingAIAssistant() {
                     </div>
                     <div className="flex items-center justify-between mt-1">
                       <p className="text-xs text-gray-500">
-                        Powered by AutoDoc AI
+                        {isServiceProvider ? 'Analytics AI Assistant' : 'Powered by AutoDoc AI'}
                       </p>
                       <p className="text-xs text-gray-400">
                         {input.length}/500
