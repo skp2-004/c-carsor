@@ -131,7 +131,6 @@ export default function DashboardPage() {
     { id: 'overview', label: 'Overview', icon: <Home className="w-5 h-5" /> },
     { id: 'analytics', label: 'Analytics', icon: <BarChart3 className="w-5 h-5" /> },
     { id: 'trends', label: 'Trends', icon: <TrendingUp className="w-5 h-5" /> },
-    { id: 'users', label: 'Users', icon: <Users className="w-5 h-5" /> },
     { id: 'reports', label: 'Reports', icon: <FileText className="w-5 h-5" /> },
     { id: 'settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> },
   ];
@@ -220,28 +219,6 @@ export default function DashboardPage() {
                 ))}
               </nav>
 
-              {/* Quick Actions */}
-              <div className="mt-8 px-4">
-                <div className="border-t border-white/10 pt-6">
-                  <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-4 px-4">
-                    Quick Actions
-                  </h3>
-                  <div className="space-y-2">
-                    <button className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200">
-                      <Search className="w-5 h-5" />
-                      <span className="font-medium">Search</span>
-                    </button>
-                    <button className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200">
-                      <Bookmark className="w-5 h-5" />
-                      <span className="font-medium">Bookmarks</span>
-                    </button>
-                    <button className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200">
-                      <MessageCircle className="w-5 h-5" />
-                      <span className="font-medium">Messages</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Footer */}

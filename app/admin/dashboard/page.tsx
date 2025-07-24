@@ -161,7 +161,7 @@ export default function AdminDashboard() {
       {/* Header */}
       <div className="bg-white shadow-lg border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
+          <div className="flex justify-between items-center h-16 overflow-hidden">
             <div className="flex items-center gap-3">
               <div className="w-8 h-8 bg-gradient-to-r from-red-600 to-orange-600 rounded-lg flex items-center justify-center shadow-lg">
                 <Shield className="w-5 h-5 text-white" />
@@ -173,14 +173,14 @@ export default function AdminDashboard() {
                 <p className="text-xs text-gray-500">System Administration</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Badge variant="destructive" className="bg-red-100 text-red-700 border-red-200">
                 Administrator
               </Badge>
-              <span className="text-sm text-gray-600">Welcome, {session.user?.name}</span>
+              <span className="text-sm text-gray-600 hidden sm:block">Welcome, {session.user?.name}</span>
               <Button variant="outline" size="sm" onClick={() => signOut({ callbackUrl: '/' })} className="border-red-200 text-red-600 hover:bg-red-50">
                 <LogOut className="w-4 h-4 mr-2" />
-                Logout
+                <span className="hidden sm:inline">Logout</span>
               </Button>
             </div>
           </div>

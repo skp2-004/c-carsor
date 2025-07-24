@@ -106,7 +106,7 @@ export default function HomePage() {
       {/* Header */}
       <header className="relative z-10 bg-black/20 backdrop-blur-xl border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-20 overflow-hidden">
             <div className="flex items-center gap-4">
               <div className="relative">
                 <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-2xl">
@@ -121,17 +121,17 @@ export default function HomePage() {
                 <p className="text-xs text-gray-400 font-medium">Next-Gen Vehicle Intelligence</p>
               </div>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2 sm:gap-4">
               <Button 
                 variant="ghost" 
                 onClick={() => router.push('/auth/signin')}
-                className="text-gray-300 hover:text-white hover:bg-white/10 backdrop-blur-sm font-medium border border-white/10"
+                className="text-gray-300 hover:text-white hover:bg-white/10 backdrop-blur-sm font-medium border border-white/10 text-sm sm:text-base px-2 sm:px-4"
               >
                 Sign In
               </Button>
               <Button 
                 onClick={() => router.push('/auth/signup')}
-                className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white shadow-2xl font-medium px-6"
+                className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white shadow-2xl font-medium px-3 sm:px-6 text-sm sm:text-base"
               >
                 Get Started
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -179,7 +179,7 @@ export default function HomePage() {
                 size="lg" 
                 variant="outline" 
                 onClick={() => router.push('/auth/signin')}
-                className="border-white/20 text-white hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-medium group"
+                className="border-white/20 text-white bg-white/5 hover:bg-white/10 backdrop-blur-sm px-8 py-4 text-lg font-medium group"
               >
                 <Shield className="w-6 h-6 mr-3 stroke-gray-500 group-hover:scale-110 transition-transform" />
 
@@ -213,10 +213,6 @@ export default function HomePage() {
       <section className="relative z-10 py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <Badge className="bg-gradient-to-r from-cyan-500/10 to-purple-500/10 text-cyan-300 border-cyan-500/20 mb-4">
-              <Cpu className="w-4 h-4 mr-2" />
-              Advanced Technology
-            </Badge>
             <h2 className="text-5xl font-bold mb-6">
               <span className="bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                 Enterprise AI Features
@@ -243,40 +239,6 @@ export default function HomePage() {
                   <CardDescription className="text-gray-400 text-lg leading-relaxed">
                     {feature.description}
                   </CardDescription>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="relative z-10 py-24">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <Badge className="bg-gradient-to-r from-green-500/10 to-cyan-500/10 text-green-300 border-green-500/20 mb-4">
-              <Users className="w-4 h-4 mr-2" />
-              Customer Success
-            </Badge>
-            <h2 className="text-5xl font-bold mb-6 bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              Trusted by Professionals
-            </h2>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <Card key={index} className="bg-black/20 backdrop-blur-xl border border-white/10 hover:bg-black/30 transition-all duration-300 shadow-2xl">
-                <CardContent className="p-6">
-                  <div className="flex items-center mb-4">
-                    {[...Array(testimonial.rating)].map((_, i) => (
-                      <Star key={i} className="w-4 h-4 text-yellow-400 fill-current" />
-                    ))}
-                  </div>
-                  <p className="text-gray-300 mb-4 italic">"{testimonial.content}"</p>
-                  <div>
-                    <p className="text-white font-semibold">{testimonial.name}</p>
-                    <p className="text-gray-400 text-sm">{testimonial.role}</p>
-                  </div>
                 </CardContent>
               </Card>
             ))}
