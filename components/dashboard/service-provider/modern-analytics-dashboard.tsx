@@ -63,7 +63,8 @@ import {
   Star,
   CheckCircle,
   XCircle,
-  AlertCircle
+  AlertCircle,
+  FileText
 } from 'lucide-react';
 import type { ComponentType } from 'react';
 
@@ -515,6 +516,32 @@ export default function ModernAnalyticsDashboard() {
            'Conduct detailed root cause analysis and implement quality improvements';
   };
 
+  const exportData = () => {
+    if (!data) return;
+    
+    const exportData = {
+      overview: data.overview,
+      issuesByModel: data.issuesByModel,
+      issuesByCategory: data.issuesByCategory,
+      severityDistribution: data.severityDistribution,
+      monthlyTrends: data.monthlyTrends,
+      manufacturingDefects: data.manufacturingDefects,
+      qualityMetrics: data.qualityMetrics,
+      geographicAnalysis: data.geographicAnalysis,
+      exportedAt: new Date().toISOString(),
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `analytics-report-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -566,11 +593,21 @@ export default function ModernAnalyticsDashboard() {
         </div>
         
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="border-white/20 text-white hover:bg-white/10">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="border-white/20 text-white bg-white/5 hover:bg-white/10"
+            onClick={() => exportData()}
+          >
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
-          <Button variant="outline" size="sm" onClick={fetchRealAnalyticsData} className="border-white/20 text-white hover:bg-white/10">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={fetchRealAnalyticsData} 
+            className="border-white/20 text-white bg-white/5 hover:bg-white/10"
+          >
             <RefreshCw className="w-4 h-4 mr-2" />
             Refresh
           </Button>
@@ -1071,6 +1108,101 @@ export default function ModernAnalyticsDashboard() {
               </CardContent>
             </Card>
           </div>
+        )}
+
+        {activeTab === 'reports' && (
+          <Card className="bg-black/20 backdrop-blur-xl border border-white/10 shadow-2xl">
+            <CardHeader>
+              <CardTitle className="text-white">Generate Reports</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Button 
+                  onClick={() => exportData()}
+                  className="bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white p-6 h-auto flex-col gap-3"
+                >
+                  <Download className="w-8 h-8" />
+                  <div className="text-center">
+                    <h3 className="font-semibold">Export Analytics Data</h3>
+                    <p className="text-sm opacity-80">Download complete analytics report</p>
+                  </div>
+                </Button>
+                
+                <Button 
+                  onClick={() => {
+                    const summaryData = {
+                      totalIssues: data?.overview.totalIssues || 0,
+                      resolutionRate: data?.overview.resolutionRate || 0,
+                      topIssues: data?.manufacturingDefects.slice(0, 5) || [],
+                      generatedAt: new Date().toISOString(),
+                    };
+                    const blob = new Blob([JSON.stringify(summaryData, null, 2)], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `summary-report-${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                  }}
+                  className="bg-gradient-to-r from-green-500 to-teal-500 hover:from-green-600 hover:to-teal-600 text-white p-6 h-auto flex-col gap-3"
+                >
+                  <FileText className="w-8 h-8" />
+                  <div className="text-center">
+                    <h3 className="font-semibold">Summary Report</h3>
+                    <p className="text-sm opacity-80">Quick overview of key metrics</p>
+                  </div>
+                </Button>
+              </div>
+              
+              <div className="text-center text-gray-400">
+                <p className="text-sm">Reports are generated in JSON format for easy integration with other systems.</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {activeTab === 'settings' && (
+          <Card className="bg-black/20 backdrop-blur-xl border border-white/10 shadow-2xl">
+            <CardHeader>
+              <CardTitle className="text-white">System Settings</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white">Data Refresh Settings</h3>
+                  <div className="space-y-2">
+                    <label className="text-sm text-gray-400">Auto-refresh interval</label>
+                    <select className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-white">
+                      <option value="5">5 minutes</option>
+                      <option value="15">15 minutes</option>
+                      <option value="30">30 minutes</option>
+                      <option value="60">1 hour</option>
+                    </select>
+                  </div>
+                </div>
+                
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-white">Export Settings</h3>
+                  <div className="space-y-2">
+                    <label className="text-sm text-gray-400">Default export format</label>
+                    <select className="w-full bg-white/5 border border-white/10 rounded-lg p-2 text-white">
+                      <option value="json">JSON</option>
+                      <option value="csv">CSV</option>
+                      <option value="xlsx">Excel</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="pt-6 border-t border-white/10">
+                <Button className="bg-gradient-to-r from-cyan-500 to-purple-500 hover:from-cyan-600 hover:to-purple-600 text-white">
+                  Save Settings
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         {activeTab === 'geographic' && (

@@ -258,7 +258,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
                   variant="outline"
                   size="icon"
                   onClick={() => fileInputRef.current?.click()}
-                  className="h-12 w-12 cyber-glass border-white/20 hover:bg-white/10 group"
+                  className="h-12 w-12 bg-white/5 border-white/20 hover:bg-white/10 group border rounded-xl backdrop-blur-sm"
                   title="Upload Image for AI Analysis"
                 >
                   <div className="relative">
@@ -276,7 +276,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
                   size="icon"
                   onClick={isRecording ? stopRecording : startRecording}
                   disabled={isProcessing}
-                  className={`h-12 w-12 ${isRecording ? 'bg-red-500/20 border-red-400 hover:bg-red-500/30' : 'cyber-glass border-white/20 hover:bg-white/10'}`}
+                  className={`h-12 w-12 ${isRecording ? 'bg-red-500/20 border-red-400 hover:bg-red-500/30' : 'bg-white/5 border-white/20 hover:bg-white/10'} border rounded-xl backdrop-blur-sm`}
                 >
                   {isRecording ? <MicOff className="w-5 h-5 text-red-400" /> : <Mic className="w-5 h-5 text-white/70" />}
                 </Button>
@@ -287,7 +287,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
                   size="icon"
                   onClick={handleTextSubmit}
                   disabled={!issueText.trim() || isProcessing}
-                  className="h-12 w-12 holographic-button"
+                  className="h-12 w-12 bg-gradient-to-r from-cyan-500/20 to-purple-500/20 border border-cyan-400/30 text-cyan-400 hover:bg-gradient-to-r hover:from-cyan-500/30 hover:to-purple-500/30 hover:border-cyan-400/50 hover:text-white rounded-xl backdrop-blur-sm transition-all duration-300"
                 >
                   {isProcessing ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
                 </Button>
@@ -315,7 +315,7 @@ export default function IssueForm({ vehicleModel, onSubmit }: IssueFormProps) {
                 <img 
                   src={imagePreview} 
                   alt="Issue preview" 
-                  className="w-full h-64 object-cover rounded-2xl border border-white/10"
+                  className="w-full max-w-md h-64 object-contain rounded-2xl border border-white/10 bg-black/20 mx-auto"
                 />
                 <Button
                   type="button"
