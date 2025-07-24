@@ -6,64 +6,92 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import {
-  ResponsiveContainer as RC,
-  BarChart as BC,
-  PieChart as PC,
-  LineChart as LC,
-  AreaChart as AC,
-  RadarChart as RDC,
-  ScatterChart as SC,
-  XAxis as X,
-  YAxis as Y,
-  CartesianGrid as CG,
-  Tooltip as TT,
-  Bar as B,
-  Pie as P,
-  Cell as C,
-  Line as L,
-  Area as A,
-  Radar as R,
-  Scatter as S,
-  PolarGrid as PG,
-  PolarAngleAxis as PAA,
-  PolarRadiusAxis as PRA
+  ResponsiveContainer,
+  BarChart,
+  PieChart,
+  LineChart,
+  AreaChart,
+  RadarChart,
+  ScatterChart,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Bar,
+  Pie,
+  Cell,
+  Line,
+  Area,
+  Radar,
+  Scatter,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis
 } from 'recharts';
-
+import {
+  Home,
+  Car,
+  Factory,
+  TrendingUp,
+  Shield,
+  Globe,
+  TrendingUp as TrendingUpIcon,
+  AlertTriangle,
+  Wrench,
+  Users,
+  Clock,
+  DollarSign,
+  Activity,
+  Target,
+  Zap,
+  Award,
+  BarChart3,
+  PieChart as PieChartIcon,
+  LineChart as LineChartIcon,
+  TrendingDown,
+  ArrowUpRight,
+  ArrowDownRight,
+  Calendar,
+  Filter,
+  Download,
+  RefreshCw,
+  Bug,
+  Settings,
+  Gauge,
+  Database,
+  Cpu,
+  Star,
+  CheckCircle,
+  XCircle,
+  AlertCircle
+} from 'lucide-react';
 import type { ComponentType } from 'react';
 
 // Cast to bypass JSX incompatibility
-const ResponsiveContainer = RC as unknown as ComponentType<any>;
-const BarChart = BC as unknown as ComponentType<any>;
-const PieChart = PC as unknown as ComponentType<any>;
-const LineChart = LC as unknown as ComponentType<any>;
-const AreaChart = AC as unknown as ComponentType<any>;
-const RadarChart = RDC as unknown as ComponentType<any>;
-const ScatterChart = SC as unknown as ComponentType<any>;
+const ResponsiveContainerCast = ResponsiveContainer as unknown as ComponentType<any>;
+const BarChartCast = BarChart as unknown as ComponentType<any>;
+const PieChartCast = PieChart as unknown as ComponentType<any>;
+const LineChartCast = LineChart as unknown as ComponentType<any>;
+const AreaChartCast = AreaChart as unknown as ComponentType<any>;
+const RadarChartCast = RadarChart as unknown as ComponentType<any>;
+const ScatterChartCast = ScatterChart as unknown as ComponentType<any>;
 
-const XAxis = X as unknown as ComponentType<any>;
-const YAxis = Y as unknown as ComponentType<any>;
-const CartesianGrid = CG as unknown as ComponentType<any>;
-const Tooltip = TT as unknown as ComponentType<any>;
+const XAxisCast = XAxis as unknown as ComponentType<any>;
+const YAxisCast = YAxis as unknown as ComponentType<any>;
+const CartesianGridCast = CartesianGrid as unknown as ComponentType<any>;
+const TooltipCast = Tooltip as unknown as ComponentType<any>;
 
-const Bar = B as unknown as ComponentType<any>;
-const Pie = P as unknown as ComponentType<any>;
-const Cell = C as unknown as ComponentType<any>;
-const Line = L as unknown as ComponentType<any>;
-const Area = A as unknown as ComponentType<any>;
-const Radar = R as unknown as ComponentType<any>;
-const Scatter = S as unknown as ComponentType<any>;
+const BarCast = Bar as unknown as ComponentType<any>;
+const PieCast = Pie as unknown as ComponentType<any>;
+const CellCast = Cell as unknown as ComponentType<any>;
+const LineCast = Line as unknown as ComponentType<any>;
+const AreaCast = Area as unknown as ComponentType<any>;
+const RadarCast = Radar as unknown as ComponentType<any>;
+const ScatterCast = Scatter as unknown as ComponentType<any>;
 
-const PolarGrid = PG as unknown as ComponentType<any>;
-const PolarAngleAxis = PAA as unknown as ComponentType<any>;
-const PolarRadiusAxis = PRA as unknown as ComponentType<any>;
-
-import { 
-  TrendingUp, AlertTriangle, Wrench, Car, Users, Clock, DollarSign,
-  Activity, Target, Zap, Shield, Award, BarChart3, PieChart as PieChartIcon,
-  LineChart as LineChartIcon, TrendingDown, ArrowUpRight, ArrowDownRight,
-  Calendar, Filter, Download, RefreshCw, Factory, Bug, Settings, Gauge,
-  Database, Cpu, Globe, Star, CheckCircle, XCircle, AlertCircle
-} from 'lucide-react';
+const PolarGridCast = PolarGrid as unknown as ComponentType<any>;
+const PolarAngleAxisCast = PolarAngleAxis as unknown as ComponentType<any>;
+const PolarRadiusAxisCast = PolarRadiusAxis as unknown as ComponentType<any>;
 
 interface Issue {
   _id: string;
@@ -145,6 +173,12 @@ interface AnalyticsData {
   }>;
 }
 
+interface Tab {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+}
+
 export default function ModernAnalyticsDashboard() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -152,6 +186,15 @@ export default function ModernAnalyticsDashboard() {
   const [users, setUsers] = useState<User[]>([]);
   const [timeRange, setTimeRange] = useState('6months');
   const [activeTab, setActiveTab] = useState('overview');
+
+  const tabs: Tab[] = [
+    { id: 'overview', label: 'Overview', icon: <Home className="w-4 h-4" /> },
+    { id: 'models', label: 'Vehicle Models', icon: <Car className="w-4 h-4" /> },
+    { id: 'defects', label: 'Manufacturing', icon: <Factory className="w-4 h-4" /> },
+    { id: 'trends', label: 'Trends', icon: <TrendingUp className="w-4 h-4" /> },
+    { id: 'quality', label: 'Quality', icon: <Shield className="w-4 h-4" /> },
+    { id: 'geographic', label: 'Geographic', icon: <Globe className="w-4 h-4" /> },
+  ];
 
   useEffect(() => {
     fetchRealAnalyticsData();
@@ -169,7 +212,6 @@ export default function ModernAnalyticsDashboard() {
         const issuesData = await issuesResponse.json();
         setIssues(issuesData);
         
-        // Try to get users data, but don't fail if it's not available
         let usersData = [];
         if (usersResponse.ok) {
           usersData = await usersResponse.json();
@@ -180,7 +222,6 @@ export default function ModernAnalyticsDashboard() {
       }
     } catch (error) {
       console.error('Failed to fetch analytics data:', error);
-      // Set empty data structure instead of failing
       setData({
         overview: {
           totalIssues: 0,
@@ -221,7 +262,7 @@ export default function ModernAnalyticsDashboard() {
           totalUsers: usersData?.length || 0,
           avgResolutionTime: 0,
           resolutionRate: 0,
-          customerSatisfaction: 85, // Default satisfaction
+          customerSatisfaction: 85,
         },
         issuesByModel: [],
         issuesByCategory: [],
@@ -239,25 +280,22 @@ export default function ModernAnalyticsDashboard() {
       return;
     }
 
-    // Overview calculations
     const totalIssues = issuesData.length;
     const resolvedIssues = issuesData.filter(issue => issue.status === 'resolved').length;
     const activeIssues = totalIssues - resolvedIssues;
     const criticalIssues = issuesData.filter(issue => issue.severity === 'high').length;
-    const totalUsers = usersData?.length || Math.max(1, Math.ceil(totalIssues * 0.7)); // Estimate users
+    const totalUsers = usersData?.length || Math.max(1, Math.ceil(totalIssues * 0.7));
     const resolutionRate = totalIssues > 0 ? Math.round((resolvedIssues / totalIssues) * 100) : 0;
 
-    // Calculate average resolution time from real data
     const resolvedWithTime = issuesData.filter(issue => issue.status === 'resolved' && issue.resolvedAt);
     const avgResolutionTime = resolvedWithTime.length > 0 
       ? resolvedWithTime.reduce((acc, issue) => {
           const created = new Date(issue.createdAt);
           const resolved = new Date(issue.resolvedAt!);
           return acc + (resolved.getTime() - created.getTime());
-        }, 0) / resolvedWithTime.length / (1000 * 60 * 60 * 24) // Convert to days
-      : 3.5; // Default average
+        }, 0) / resolvedWithTime.length / (1000 * 60 * 60 * 24)
+      : 3.5;
 
-    // Issues by model analysis
     const modelCounts = issuesData.reduce((acc, issue) => {
       const model = issue.vehicleModel || 'Unknown Model';
       if (!acc[model]) {
@@ -278,7 +316,6 @@ export default function ModernAnalyticsDashboard() {
       reliability: counts.total > 0 ? Math.max(60, 100 - (counts.total / totalUsers * 50)) : 95,
     })).sort((a, b) => b.issues - a.issues);
 
-    // Issues by category analysis
     const categoryCounts = issuesData.reduce((acc, issue) => {
       const category = issue.category || 'General';
       if (!acc[category]) {
@@ -296,7 +333,6 @@ export default function ModernAnalyticsDashboard() {
       avgSeverity: Math.round((data.severitySum / data.count) * 10) / 10,
     })).sort((a, b) => b.count - a.count);
 
-    // Severity distribution
     const severityCounts = issuesData.reduce((acc, issue) => {
       acc[issue.severity] = (acc[issue.severity] || 0) + 1;
       return acc;
@@ -308,13 +344,10 @@ export default function ModernAnalyticsDashboard() {
       percentage: Math.round((count / totalIssues) * 100),
     }));
 
-    // Monthly trends analysis
     const monthlyTrends = generateMonthlyTrends(issuesData, usersData);
 
-    // Manufacturing defects analysis
     const manufacturingDefects = generateManufacturingDefects(issuesData, totalIssues);
 
-    // Quality metrics
     const qualityMetrics = {
       overallReliability: Math.max(70, 100 - (totalIssues / Math.max(totalUsers, 1) * 15)),
       defectRate: totalUsers > 0 ? Math.min(30, Math.round((totalIssues / totalUsers) * 100)) : 0,
@@ -322,7 +355,6 @@ export default function ModernAnalyticsDashboard() {
       warrantyClaimRate: Math.min(25, Math.round((criticalIssues / Math.max(totalIssues, 1)) * 100)),
     };
 
-    // Geographic analysis
     const geographicAnalysis = generateGeographicData(totalUsers, totalIssues, avgResolutionTime);
 
     setData({
@@ -511,18 +543,8 @@ export default function ModernAnalyticsDashboard() {
 
   const COLORS = ['#00d4ff', '#ff0080', '#00ff88', '#ffaa00', '#ff4444', '#8b5cf6', '#6b7280', '#ec4899'];
 
-  const tabs = [
-    { id: 'overview', label: 'Overview', icon: <Home className="w-4 h-4" /> },
-    { id: 'models', label: 'Vehicle Models', icon: <Car className="w-4 h-4" /> },
-    { id: 'defects', label: 'Manufacturing', icon: <Factory className="w-4 h-4" /> },
-    { id: 'trends', label: 'Trends', icon: <TrendingUp className="w-4 h-4" /> },
-    { id: 'quality', label: 'Quality', icon: <Shield className="w-4 h-4" /> },
-    { id: 'geographic', label: 'Geographic', icon: <Globe className="w-4 h-4" /> },
-  ];
-
   return (
     <div className="space-y-8">
-      {/* Controls */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="flex items-center gap-4">
           <Select value={timeRange} onValueChange={setTimeRange}>
@@ -555,7 +577,6 @@ export default function ModernAnalyticsDashboard() {
         </div>
       </div>
 
-      {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-8 gap-4">
         <Card className="bg-black/20 backdrop-blur-xl border border-white/10 hover:bg-black/30 transition-all duration-300 shadow-2xl">
           <CardContent className="p-6">
@@ -702,7 +723,6 @@ export default function ModernAnalyticsDashboard() {
         </Card>
       </div>
 
-      {/* Tab Navigation */}
       <div className="flex flex-wrap gap-2 p-1 bg-black/20 backdrop-blur-xl rounded-2xl border border-white/10">
         {tabs.map((tab) => (
           <button
@@ -720,7 +740,6 @@ export default function ModernAnalyticsDashboard() {
         ))}
       </div>
 
-      {/* Tab Content */}
       <div className="space-y-6">
         {activeTab === 'overview' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -733,9 +752,9 @@ export default function ModernAnalyticsDashboard() {
               </CardHeader>
               <CardContent>
                 {data.issuesByCategory.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
-                    <PieChart>
-                      <Pie
+                  <ResponsiveContainerCast width="100%" height={300}>
+                    <PieChartCast>
+                      <PieCast
                         data={data.issuesByCategory}
                         cx="50%"
                         cy="50%"
@@ -747,10 +766,10 @@ export default function ModernAnalyticsDashboard() {
                         }
                       >
                         {data.issuesByCategory.map((entry, index) => (
-                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          <CellCast key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                         ))}
-                      </Pie>
-                      <Tooltip 
+                      </PieCast>
+                      <TooltipCast 
                         contentStyle={{ 
                           backgroundColor: 'rgba(0, 0, 0, 0.9)', 
                           border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -758,8 +777,8 @@ export default function ModernAnalyticsDashboard() {
                           color: '#ffffff'
                         }} 
                       />
-                    </PieChart>
-                  </ResponsiveContainer>
+                    </PieChartCast>
+                  </ResponsiveContainerCast>
                 ) : (
                   <div className="flex items-center justify-center h-[300px] text-gray-400">
                     <div className="text-center">
@@ -813,12 +832,12 @@ export default function ModernAnalyticsDashboard() {
             </CardHeader>
             <CardContent>
               {data.issuesByModel.length > 0 ? (
-                <ResponsiveContainer width="100%" height={400}>
-                  <BarChart data={data.issuesByModel}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
-                    <XAxis dataKey="model" stroke="#ffffff" />
-                    <YAxis stroke="#ffffff" />
-                    <Tooltip 
+                <ResponsiveContainerCast width="100%" height={400}>
+                  <BarChartCast data={data.issuesByModel}>
+                    <CartesianGridCast strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+                    <XAxisCast dataKey="model" stroke="#ffffff" />
+                    <YAxisCast stroke="#ffffff" />
+                    <TooltipCast 
                       contentStyle={{ 
                         backgroundColor: 'rgba(0, 0, 0, 0.9)', 
                         border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -826,10 +845,10 @@ export default function ModernAnalyticsDashboard() {
                         color: '#ffffff'
                       }} 
                     />
-                    <Bar dataKey="issues" fill="#00d4ff" name="Total Issues" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="resolved" fill="#00ff88" name="Resolved" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                    <BarCast dataKey="issues" fill="#00d4ff" name="Total Issues" radius={[4, 4, 0, 0]} />
+                    <BarCast dataKey="resolved" fill="#00ff88" name="Resolved" radius={[4, 4, 0, 0]} />
+                  </BarChartCast>
+                </ResponsiveContainerCast>
               ) : (
                 <div className="flex items-center justify-center h-[400px] text-gray-400">
                   <div className="text-center">
@@ -921,8 +940,8 @@ export default function ModernAnalyticsDashboard() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <ResponsiveContainer width="100%" height={350}>
-                <AreaChart data={data.monthlyTrends}>
+              <ResponsiveContainerCast width="100%" height={350}>
+                <AreaChartCast data={data.monthlyTrends}>
                   <defs>
                     <linearGradient id="colorIssues" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#00d4ff" stopOpacity={0.8}/>
@@ -937,10 +956,10 @@ export default function ModernAnalyticsDashboard() {
                       <stop offset="95%" stopColor="#ff0080" stopOpacity={0.1}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
-                  <XAxis dataKey="month" stroke="#ffffff" />
-                  <YAxis stroke="#ffffff" />
-                  <Tooltip 
+                  <CartesianGridCast strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+                  <XAxisCast dataKey="month" stroke="#ffffff" />
+                  <YAxisCast stroke="#ffffff" />
+                  <TooltipCast 
                     contentStyle={{ 
                       backgroundColor: 'rgba(0, 0, 0, 0.9)', 
                       border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -948,11 +967,11 @@ export default function ModernAnalyticsDashboard() {
                       color: '#ffffff'
                     }} 
                   />
-                  <Area type="monotone" dataKey="issues" stroke="#00d4ff" fillOpacity={1} fill="url(#colorIssues)" strokeWidth={3} />
-                  <Area type="monotone" dataKey="resolved" stroke="#00ff88" fillOpacity={1} fill="url(#colorResolved)" strokeWidth={3} />
-                  <Area type="monotone" dataKey="users" stroke="#ff0080" fillOpacity={1} fill="url(#colorUsers)" strokeWidth={3} />
-                </AreaChart>
-              </ResponsiveContainer>
+                  <AreaCast type="monotone" dataKey="issues" stroke="#00d4ff" fillOpacity={1} fill="url(#colorIssues)" strokeWidth={3} />
+                  <AreaCast type="monotone" dataKey="resolved" stroke="#00ff88" fillOpacity={1} fill="url(#colorResolved)" strokeWidth={3} />
+                  <AreaCast type="monotone" dataKey="users" stroke="#ff0080" fillOpacity={1} fill="url(#colorUsers)" strokeWidth={3} />
+                </AreaChartCast>
+              </ResponsiveContainerCast>
             </CardContent>
           </Card>
         )}
@@ -1024,14 +1043,14 @@ export default function ModernAnalyticsDashboard() {
               </CardHeader>
               <CardContent>
                 {data.issuesByModel.length > 0 ? (
-                  <ResponsiveContainer width="100%" height={300}>
-                    <RadarChart data={data.issuesByModel.slice(0, 6)}>
-                      <PolarGrid stroke="rgba(255, 255, 255, 0.2)" />
-                      <PolarAngleAxis dataKey="model" tick={{ fontSize: 12, fill: '#ffffff' }} />
-                      <PolarRadiusAxis angle={90} domain={[0, 100]} tick={{ fontSize: 10, fill: '#ffffff' }} />
-                      <Radar name="Reliability" dataKey="reliability" stroke="#00d4ff" fill="#00d4ff" fillOpacity={0.3} strokeWidth={2} />
-                      <Radar name="Resolution Rate" dataKey="resolutionRate" stroke="#00ff88" fill="#00ff88" fillOpacity={0.3} strokeWidth={2} />
-                      <Tooltip 
+                  <ResponsiveContainerCast width="100%" height={300}>
+                    <RadarChartCast data={data.issuesByModel.slice(0, 6)}>
+                      <PolarGridCast stroke="rgba(255, 255, 255, 0.2)" />
+                      <PolarAngleAxisCast dataKey="model" tick={{ fontSize: 12, fill: '#ffffff' }} />
+                      <PolarRadiusAxisCast angle={90} domain={[0, 100]} tick={{ fontSize: 10, fill: '#ffffff' }} />
+                      <RadarCast name="Reliability" dataKey="reliability" stroke="#00d4ff" fill="#00d4ff" fillOpacity={0.3} strokeWidth={2} />
+                      <RadarCast name="Resolution Rate" dataKey="resolutionRate" stroke="#00ff88" fill="#00ff88" fillOpacity={0.3} strokeWidth={2} />
+                      <TooltipCast 
                         contentStyle={{ 
                           backgroundColor: 'rgba(0, 0, 0, 0.9)', 
                           border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -1039,8 +1058,8 @@ export default function ModernAnalyticsDashboard() {
                           color: '#ffffff'
                         }} 
                       />
-                    </RadarChart>
-                  </ResponsiveContainer>
+                    </RadarChartCast>
+                  </ResponsiveContainerCast>
                 ) : (
                   <div className="flex items-center justify-center h-[300px] text-gray-400">
                     <div className="text-center">
@@ -1061,12 +1080,12 @@ export default function ModernAnalyticsDashboard() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={data.geographicAnalysis}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
-                    <XAxis dataKey="region" stroke="#ffffff" />
-                    <YAxis stroke="#ffffff" />
-                    <Tooltip 
+                <ResponsiveContainerCast width="100%" height={300}>
+                  <BarChartCast data={data.geographicAnalysis}>
+                    <CartesianGridCast strokeDasharray="3 3" stroke="rgba(255, 255, 255, 0.1)" />
+                    <XAxisCast dataKey="region" stroke="#ffffff" />
+                    <YAxisCast stroke="#ffffff" />
+                    <TooltipCast 
                       contentStyle={{ 
                         backgroundColor: 'rgba(0, 0, 0, 0.9)', 
                         border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -1074,10 +1093,10 @@ export default function ModernAnalyticsDashboard() {
                         color: '#ffffff'
                       }} 
                     />
-                    <Bar dataKey="issues" fill="#00d4ff" name="Issues" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="users" fill="#ff0080" name="Users" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
+                    <BarCast dataKey="issues" fill="#00d4ff" name="Issues" radius={[4, 4, 0, 0]} />
+                    <BarCast dataKey="users" fill="#ff0080" name="Users" radius={[4, 4, 0, 0]} />
+                  </BarChartCast>
+                </ResponsiveContainerCast>
 
                 <div className="space-y-4">
                   {data.geographicAnalysis.map((region, index) => (
