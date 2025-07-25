@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { 
+import { X, Car, FileText, History, User, BarChart3, TrendingUp, Settings, Home, LogOut } from 'lucide-react';
+import { signOut } from 'next-auth/react';
   Menu, 
   X, 
   Home, 
@@ -65,6 +66,10 @@ export default function MobileSidebar({ userType, activeTab, onTabChange, userNa
   ];
 
   const tabs = userType === 'vehicle_owner' ? vehicleOwnerTabs : serviceProviderTabs;
+
+  const handleLogout = () => {
+    signOut({ callbackUrl: '/' });
+  };
 
   const handleTabClick = (tabId: string) => {
     onTabChange(tabId);
@@ -204,23 +209,15 @@ export default function MobileSidebar({ userType, activeTab, onTabChange, userNa
               ))}
             </nav>
 
-            {/* Additional Menu Items */}
-            <div className="mt-8 px-4">
-              <div className="border-t border-white/10 pt-4">
-                <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3 px-4">
-                  Quick Actions
-                </h3>
-                <div className="space-y-2">
-                  <button className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200">
-                    <Search className="w-5 h-5" />
-                    <span className="font-medium">Search</span>
-                  </button>
-                  <button className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200">
-                    <Bookmark className="w-5 h-5" />
-                    <span className="font-medium">Bookmarks</span>
-                  </button>
-                  <button className="w-full flex items-center gap-4 px-4 py-3 rounded-2xl text-gray-400 hover:text-white hover:bg-white/5 transition-all duration-200">
-                    <MessageCircle className="w-5 h-5" />
+            {/* Sign Out */}
+            <div className="px-6 py-4 border-t border-white/10">
+              <Button 
+                onClick={handleLogout}
+                className="w-full bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-400/30 rounded-2xl py-3 font-medium"
+              >
+                <LogOut className="w-5 h-5 mr-2" />
+                Sign Out
+              </Button>
                     <span className="font-medium">Messages</span>
                   </button>
                 </div>
