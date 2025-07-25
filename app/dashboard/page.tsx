@@ -218,7 +218,6 @@ export default function DashboardPage() {
                   </button>
                 ))}
               </nav>
-
             </div>
 
             {/* Footer */}
