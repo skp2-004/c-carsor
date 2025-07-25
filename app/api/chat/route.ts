@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { message, conversationId } = body;
+    const { message, conversationId, userType } = body;
 
     if (!message?.trim()) {
       return NextResponse.json({ message: 'Message is required' }, { status: 400 });
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
       { _id: new ObjectId((session.user as any).id) }
     );
 
-    const isServiceProvider = user?.userType === 'service_provider';
+    const isServiceProvider = user?.userType === 'service_provider' || userType === 'service_provider';
     let contextData = '';
     
     if (isServiceProvider) {
@@ -52,10 +52,14 @@ export async function POST(request: NextRequest) {
       const allIssues = await db.collection('issues')
         .find({})
         .sort({ createdAt: -1 })
-        .limit(50)
+        .limit(100)
         .toArray();
       
-      contextData = `service_provider analytics data: ${allIssues.length} total issues`;
+      const allUsers = await db.collection('users')
+        .find({ userType: 'vehicle_owner' })
+        .toArray();
+      
+      contextData = `service_provider analytics data: ${allIssues.length} total issues, ${allUsers.length} users, recent issues: ${JSON.stringify(allIssues.slice(0, 10).map(i => ({ category: i.category, severity: i.severity, vehicleModel: i.vehicleModel })))}`;
     } else {
       // For vehicle owners, get their issues
       const userIssues = await db.collection('issues')

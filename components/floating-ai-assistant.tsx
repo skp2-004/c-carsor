@@ -146,7 +146,8 @@ export default function FloatingAIAssistant() {
         },
         body: JSON.stringify({
           message: userMessage.text,
-          conversationId: conversationId
+          conversationId: conversationId,
+          userType: isServiceProvider ? 'service_provider' : 'vehicle_owner'
         }),
       });
 
