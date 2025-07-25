@@ -16,7 +16,10 @@ import {
   Settings,
   Bell,
   Car,
-  LogOut
+  LogOut,
+  Activity,
+  Shield,
+  TrendingUp
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
@@ -51,7 +54,7 @@ export default function MobileSidebar({ userType, activeTab, onTabChange, userNa
   const serviceProviderTabs = [
     { id: 'overview', label: 'Overview', icon: <Home className="w-5 h-5" /> },
     { id: 'analytics', label: 'Analytics', icon: <BarChart3 className="w-5 h-5" /> },
-    { id: 'trends', label: 'Trends', icon: <Users className="w-5 h-5" /> },
+    { id: 'trends', label: 'Trends', icon: <TrendingUp className="w-5 h-5" /> },
     { id: 'reports', label: 'Reports', icon: <FileText className="w-5 h-5" /> },
     { id: 'settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> },
   ];
