@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   Car, 
@@ -13,18 +12,17 @@ import {
   Wrench, 
   Users, 
   Clock,
-  Filter,
   Download,
   Calendar,
   MapPin,
-  BarChart3,
-  PieChart,
-  Activity,
-  Shield,
-  Globe,
   Factory,
   Target,
-  Zap
+  Globe,
+  Activity,
+  Shield,
+  BarChart3,
+  PieChart,
+  LineChart
 } from 'lucide-react';
 
 interface Issue {
@@ -77,11 +75,14 @@ interface AnalyticsData {
   }>;
 }
 
-export default function ModernAnalyticsDashboard() {
+interface ModernAnalyticsDashboardProps {
+  activeTab?: string;
+}
+
+export default function ModernAnalyticsDashboard({ activeTab = 'overview' }: ModernAnalyticsDashboardProps) {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [issues, setIssues] = useState<Issue[]>([]);
-  const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
     fetchAnalyticsData();
@@ -270,6 +271,70 @@ export default function ModernAnalyticsDashboard() {
     });
   };
 
+  const exportData = async () => {
+    try {
+      if (!data) {
+        alert('No data available to export');
+        return;
+      }
+
+      const exportData = {
+        generatedAt: new Date().toISOString(),
+        overview: data.overview,
+        issuesByModel: data.issuesByModel,
+        issuesByCategory: data.issuesByCategory,
+        monthlyTrends: data.monthlyTrends,
+        commonFlaws: data.commonFlaws,
+        severityDistribution: data.severityDistribution,
+        rawIssues: issues
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: 'application/json'
+      });
+
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `analytics-report-${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      // Also create CSV export for easier analysis
+      const csvData = [
+        ['Issue ID', 'Description', 'Category', 'Severity', 'Status', 'Vehicle Model', 'Created Date', 'Resolved Date'],
+        ...issues.map(issue => [
+          issue._id,
+          issue.description.replace(/,/g, ';'), // Replace commas to avoid CSV issues
+          issue.category,
+          issue.severity,
+          issue.status,
+          issue.vehicleModel,
+          new Date(issue.createdAt).toLocaleDateString(),
+          issue.resolvedAt ? new Date(issue.resolvedAt).toLocaleDateString() : 'Not resolved'
+        ])
+      ];
+
+      const csvContent = csvData.map(row => row.join(',')).join('\n');
+      const csvBlob = new Blob([csvContent], { type: 'text/csv' });
+      const csvUrl = URL.createObjectURL(csvBlob);
+      const csvLink = document.createElement('a');
+      csvLink.href = csvUrl;
+      csvLink.download = `analytics-data-${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(csvLink);
+      csvLink.click();
+      document.body.removeChild(csvLink);
+      URL.revokeObjectURL(csvUrl);
+
+      alert('Data exported successfully! Check your downloads folder for JSON and CSV files.');
+    } catch (error) {
+      console.error('Export failed:', error);
+      alert('Failed to export data. Please try again.');
+    }
+  };
+
   const renderOverviewContent = () => (
     <div className="space-y-8">
       {/* Overview Cards */}
@@ -361,11 +426,10 @@ export default function ModernAnalyticsDashboard() {
 
       {/* Quick Actions */}
       <div className="flex flex-wrap gap-4">
-        <Button className="bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 text-cyan-300 hover:bg-gradient-to-r hover:from-cyan-500/30 hover:to-blue-500/30 rounded-xl backdrop-blur-sm">
-          <Filter className="w-4 h-4 mr-2" />
-          Filter Data
-        </Button>
-        <Button className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-400/30 text-green-300 hover:bg-gradient-to-r hover:from-green-500/30 hover:to-emerald-500/30 rounded-xl backdrop-blur-sm">
+        <Button 
+          onClick={exportData}
+          className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-400/30 text-green-300 hover:bg-gradient-to-r hover:from-green-500/30 hover:to-emerald-500/30 rounded-xl backdrop-blur-sm"
+        >
           <Download className="w-4 h-4 mr-2" />
           Export Report
         </Button>
@@ -373,6 +437,164 @@ export default function ModernAnalyticsDashboard() {
           <Calendar className="w-4 h-4 mr-2" />
           Schedule Report
         </Button>
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        {/* Issues by Category Chart */}
+        <Card className="bg-black/20 backdrop-blur-xl border border-white/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-white">
+              <PieChart className="w-6 h-6 text-cyan-400" />
+              Issues by Category
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data?.issuesByCategory && data.issuesByCategory.length > 0 ? (
+              <div className="space-y-4">
+                {data.issuesByCategory.map((category, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-4 h-4 rounded-full"
+                        style={{ backgroundColor: category.color }}
+                      ></div>
+                      <span className="text-white font-medium">{category.category}</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-white font-bold">{category.count}</span>
+                      <div className="w-24 bg-gray-700 rounded-full h-2 mt-1">
+                        <div 
+                          className="h-2 rounded-full transition-all duration-300"
+                          style={{ 
+                            backgroundColor: category.color,
+                            width: `${(category.count / (data?.overview.totalIssues || 1)) * 100}%`
+                          }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-400 py-8">No category data available</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Monthly Trends Chart */}
+        <Card className="bg-black/20 backdrop-blur-xl border border-white/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-white">
+              <LineChart className="w-6 h-6 text-green-400" />
+              Monthly Trends
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data?.monthlyTrends && data.monthlyTrends.some(month => month.issues > 0) ? (
+              <div className="space-y-4">
+                {data.monthlyTrends.map((trend, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-white font-medium">{trend.month}</span>
+                      <div className="flex gap-4">
+                        <span className="text-red-400">Issues: {trend.issues}</span>
+                        <span className="text-green-400">Resolved: {trend.resolved}</span>
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <div className="flex-1 bg-gray-700 rounded-full h-2">
+                        <div 
+                          className="bg-red-400 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${trend.issues > 0 ? (trend.issues / Math.max(...data.monthlyTrends.map(t => t.issues))) * 100 : 0}%` }}
+                        ></div>
+                      </div>
+                      <div className="flex-1 bg-gray-700 rounded-full h-2">
+                        <div 
+                          className="bg-green-400 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${trend.resolved > 0 ? (trend.resolved / Math.max(...data.monthlyTrends.map(t => t.resolved))) * 100 : 0}%` }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-400 py-8">No trend data available</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Vehicle Models Performance */}
+        <Card className="bg-black/20 backdrop-blur-xl border border-white/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-white">
+              <BarChart3 className="w-6 h-6 text-blue-400" />
+              Vehicle Models Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data?.issuesByModel && data.issuesByModel.length > 0 ? (
+              <div className="space-y-4">
+                {data.issuesByModel.slice(0, 5).map((model, index) => (
+                  <div key={index} className="space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-white font-medium">{model.model}</span>
+                      <Badge className="bg-blue-500/20 text-blue-300 border-blue-400/30">
+                        {model.resolutionRate}% resolved
+                      </Badge>
+                    </div>
+                    <div className="flex gap-2 text-xs">
+                      <span className="text-gray-400">Total: {model.issues}</span>
+                      <span className="text-green-400">Resolved: {model.resolved}</span>
+                    </div>
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-gradient-to-r from-green-500 to-emerald-500 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${model.resolutionRate}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-400 py-8">No model data available</p>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Severity Distribution */}
+        <Card className="bg-black/20 backdrop-blur-xl border border-white/10">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-white">
+              <Target className="w-6 h-6 text-purple-400" />
+              Severity Distribution
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {data?.severityDistribution && data.severityDistribution.length > 0 ? (
+              <div className="space-y-4">
+                {data.severityDistribution.map((item, index) => (
+                  <div key={index} className="flex items-center justify-between p-3 bg-white/5 rounded-xl">
+                    <div className="flex items-center gap-3">
+                      <div className={`w-4 h-4 rounded-full ${
+                        item.severity === 'High' ? 'bg-red-500' : 
+                        item.severity === 'Medium' ? 'bg-yellow-500' : 'bg-green-500'
+                      }`}></div>
+                      <span className="text-white font-medium">{item.severity} Severity</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-white font-bold">{item.count}</span>
+                      <span className="text-gray-400 text-sm ml-2">({item.percentage}%)</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-center text-gray-400 py-8">No severity data available</p>
+            )}
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
@@ -635,60 +857,21 @@ export default function ModernAnalyticsDashboard() {
     );
   }
 
-  return (
-    <div className="space-y-8">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="bg-black/20 backdrop-blur-xl border border-white/10 p-1 rounded-2xl">
-          <TabsTrigger value="overview" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-white text-gray-400 rounded-xl">
-            <BarChart3 className="w-4 h-4 mr-2" />
-            Overview
-          </TabsTrigger>
-          <TabsTrigger value="vehicle-models" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-white text-gray-400 rounded-xl">
-            <Car className="w-4 h-4 mr-2" />
-            Vehicle Models
-          </TabsTrigger>
-          <TabsTrigger value="manufacturing" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-white text-gray-400 rounded-xl">
-            <Factory className="w-4 h-4 mr-2" />
-            Manufacturing
-          </TabsTrigger>
-          <TabsTrigger value="trends" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-white text-gray-400 rounded-xl">
-            <TrendingUp className="w-4 h-4 mr-2" />
-            Trends
-          </TabsTrigger>
-          <TabsTrigger value="quality" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-white text-gray-400 rounded-xl">
-            <Shield className="w-4 h-4 mr-2" />
-            Quality
-          </TabsTrigger>
-          <TabsTrigger value="geographic" className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-cyan-500/20 data-[state=active]:to-purple-500/20 data-[state=active]:text-white text-gray-400 rounded-xl">
-            <Globe className="w-4 h-4 mr-2" />
-            Geographic
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="overview">
-          {renderOverviewContent()}
-        </TabsContent>
-
-        <TabsContent value="vehicle-models">
-          {renderVehicleModelsContent()}
-        </TabsContent>
-
-        <TabsContent value="manufacturing">
-          {renderManufacturingContent()}
-        </TabsContent>
-
-        <TabsContent value="trends">
-          {renderTrendsContent()}
-        </TabsContent>
-
-        <TabsContent value="quality">
-          {renderQualityContent()}
-        </TabsContent>
-
-        <TabsContent value="geographic">
-          {renderGeographicContent()}
-        </TabsContent>
-      </Tabs>
-    </div>
-  );
+  // Render content based on active tab
+  switch (activeTab) {
+    case 'overview':
+      return renderOverviewContent();
+    case 'vehicle-models':
+      return renderVehicleModelsContent();
+    case 'manufacturing':
+      return renderManufacturingContent();
+    case 'trends':
+      return renderTrendsContent();
+    case 'quality':
+      return renderQualityContent();
+    case 'geographic':
+      return renderGeographicContent();
+    default:
+      return renderOverviewContent();
+  }
 }
