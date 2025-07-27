@@ -374,7 +374,7 @@ export default function DashboardPage() {
               )}
             </div>
           ) : (
-            <ModernAnalyticsDashboard />
+            <ModernAnalyticsDashboard activeTab={activeTab} />
           )}
         </div>
       </div>
