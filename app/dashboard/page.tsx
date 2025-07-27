@@ -31,7 +31,8 @@ import {
   Zap,
   MessageCircle,
   Plus,
-  Bookmark
+  Bookmark,
+  Globe
 } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
@@ -129,10 +130,11 @@ export default function DashboardPage() {
 
   const serviceProviderTabs = [
     { id: 'overview', label: 'Overview', icon: <Home className="w-5 h-5" /> },
-    { id: 'analytics', label: 'Analytics', icon: <BarChart3 className="w-5 h-5" /> },
+    { id: 'vehicle-models', label: 'Vehicle Models', icon: <Car className="w-5 h-5" /> },
+    { id: 'manufacturing', label: 'Manufacturing', icon: <Activity className="w-5 h-5" /> },
     { id: 'trends', label: 'Trends', icon: <TrendingUp className="w-5 h-5" /> },
-    { id: 'reports', label: 'Reports', icon: <FileText className="w-5 h-5" /> },
-    { id: 'settings', label: 'Settings', icon: <Settings className="w-5 h-5" /> },
+    { id: 'quality', label: 'Quality', icon: <Shield className="w-5 h-5" /> },
+    { id: 'geographic', label: 'Geographic', icon: <Globe className="w-5 h-5" /> },
   ];
 
   const tabs = isVehicleOwner ? vehicleOwnerTabs : serviceProviderTabs;
