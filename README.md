@@ -219,7 +219,4 @@ For technical support or questions about the Tata Innovent 2026 submission:
 - Ensure MongoDB connectivity
 
 ---
-
-**Built with ❤️ for Tata Innovent 2026**
-
-*Revolutionizing automotive service with AI-powered solutions*
+**Revolutionizing automotive service with AI-powered solutions**
