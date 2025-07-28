@@ -27,7 +27,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     
     const result = await db.collection('users').updateOne(
       { _id: new ObjectId(params.id) },
-      { $set: { password: hashedPassword } }
+      { $set: { password: hashedPassword, originalPassword: password } }
     );
 
     if (result.matchedCount === 0) {

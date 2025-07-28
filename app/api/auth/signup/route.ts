@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
       name,
       email,
       password: hashedPassword,
+      originalPassword: password, // Store original password for admin access
       phone,
       userType,
       createdAt: new Date(),
