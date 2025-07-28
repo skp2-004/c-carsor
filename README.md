@@ -1,6 +1,6 @@
 # AutoDoc AI - Tata Vehicle Service Platform
 
-Built for **Tata Innovent 2026** - A comprehensive AI-powered vehicle service management platform specifically designed for Tata Motors vehicles.
+A comprehensive AI-powered vehicle service management platform specifically designed for Tata Motors vehicles.
 
 ## 🚗 Overview
 
