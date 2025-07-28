@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { tataModels } from '@/lib/tata-models';
-import { Save, X, User, Car, Phone, Mail } from 'lucide-react';
+import { Save, X, User, Car, Phone, Mail, Lock, Eye, EyeOff } from 'lucide-react';
 
 interface EditProfileProps {
   userProfile: any;
@@ -17,12 +17,21 @@ interface EditProfileProps {
 
 export default function EditProfile({ userProfile, onSave, onCancel }: EditProfileProps) {
   const [isLoading, setIsLoading] = useState(false);
+  const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
     vehicleModel: '',
     vehicleYear: '',
     vehicleRegistration: ''
+  });
+  const [passwordData, setPasswordData] = useState({
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   });
 
   useEffect(() => {
@@ -61,6 +70,40 @@ export default function EditProfile({ userProfile, onSave, onCancel }: EditProfi
       alert('Network error occurred');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      alert('New passwords do not match');
+      return;
+    }
+
+    setIsChangingPassword(true);
+
+    try {
+      const response = await fetch('/api/profile', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword
+        }),
+      });
+
+      if (response.ok) {
+        alert('Password updated successfully');
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      } else {
+        const error = await response.json();
+        alert(error.message || 'Failed to update password');
+      }
+    } catch (error) {
+      alert('Network error occurred');
+    } finally {
+      setIsChangingPassword(false);
     }
   };
 
@@ -223,6 +266,117 @@ export default function EditProfile({ userProfile, onSave, onCancel }: EditProfi
             </Button>
           </div>
         </form>
+
+        {/* Password Change Section */}
+        <div className="mt-8 pt-6 border-t">
+          <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-800 mb-4">
+            <Lock className="w-5 h-5" />
+            Change Password
+          </h3>
+          
+          <form onSubmit={handlePasswordChange} className="space-y-4">
+            <div>
+              <Label htmlFor="currentPassword" className="text-gray-700 font-medium">
+                Current Password
+              </Label>
+              <div className="relative">
+                <Input
+                  id="currentPassword"
+                  type={showCurrentPassword ? "text" : "password"}
+                  required
+                  value={passwordData.currentPassword}
+                  onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
+                  className="border-2 border-blue-200 focus:border-blue-400 rounded-lg bg-white/80 pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-0 top-0 h-full px-3"
+                  onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                >
+                  {showCurrentPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </Button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="newPassword" className="text-gray-700 font-medium">
+                  New Password
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="newPassword"
+                    type={showNewPassword ? "text" : "password"}
+                    required
+                    minLength={8}
+                    value={passwordData.newPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
+                    className="border-2 border-blue-200 focus:border-blue-400 rounded-lg bg-white/80 pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                  >
+                    {showNewPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="confirmPassword" className="text-gray-700 font-medium">
+                  Confirm New Password
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    required
+                    minLength={8}
+                    value={passwordData.confirmPassword}
+                    onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
+                    className="border-2 border-blue-200 focus:border-blue-400 rounded-lg bg-white/80 pr-10"
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            <div className="text-xs text-gray-500">
+              Password must be at least 8 characters long
+            </div>
+
+            <Button 
+              type="submit" 
+              disabled={isChangingPassword}
+              className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white rounded-lg py-3 shadow-lg"
+            >
+              {isChangingPassword ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  Updating Password...
+                </div>
+              ) : (
+                <div className="flex items-center gap-2">
+                  <Lock className="w-4 h-4" />
+                  Update Password
+                </div>
+              )}
+            </Button>
+          </form>
+        </div>
       </CardContent>
     </Card>
   );

@@ -17,7 +17,6 @@ export async function GET(request: NextRequest) {
     const users = await db.collection('users')
       .find({ userType: 'vehicle_owner' })
       .sort({ createdAt: -1 })
-      .project({ password: 0 })
       .toArray();
     
     return NextResponse.json(users);

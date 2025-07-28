@@ -18,7 +18,6 @@ export async function GET(request: NextRequest) {
     const providers = await db.collection('users')
       .find({ userType: 'service_provider' })
       .sort({ createdAt: -1 })
-      .project({ password: 0 })
       .toArray();
     
     return NextResponse.json(providers);
